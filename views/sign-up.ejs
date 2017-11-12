@@ -1,0 +1,48 @@
+<!--Referenced from :
+https://github.com/braitsch/node-login
+https://github.com/braitsch/node-login
+https://github.com/scotch-io/easy-node-authentication
+https://scotch.io/tutorials/easy-node-authentication-setup-and-local
+http://www.thatsoftwaredude.com/content/6125/how-to-paginate-through-a-collection-in-javascript
+https://www.djamware.com/post/58eba06380aca72673af8500/node-express-mongoose-and-passportjs-rest-api-authentication
+http://jsfiddle.net/asimshahiddIT/jrjjzw18/
+http://expressjs.com/en/starter/static-files.html
+http://fontawesome.io/examples/-->
+<!doctype html>
+<html>
+<head>
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/font-awesome.css">
+    <style>
+        body {
+            padding-top: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="col-sm-6 col-sm-offset-3">
+        <h1><span class="fa"></span>Sign-up</h1>
+        <% if (message.length > 0) { %>
+        <div class="alert alert-danger"><%= message %></div>
+        <% } %>
+        <form action="/sign-up" method="post">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" class="form-control" name="username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" name="password">
+            </div>
+            <button type="submit" class="btn btn-default btn-lg">Sign Up</button>
+        </form>
+        <hr>
+
+        <p>Already have an account? <a href="/login">Login</a></p>
+        <p>Or click <a href="/">here</a> to start again.</p>
+    </div>
+</div>
+</body>
+</html>

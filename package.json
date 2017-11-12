@@ -1,0 +1,17 @@
+{
+  "name": "Recommender-System",
+  "description": "Recommendation Engine built on Node with CR/CF Recommendation",
+  "license": "MIT",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcrypt-nodejs": "latest",
+    "connect-flash": "~0.1.1",
+    "ejs": "~0.8.5",
+    "express": "~3.4.4",
+    "mongoose": "^4.4.20",
+    "passport-local": "~0.1.6"
+  }
+}

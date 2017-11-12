@@ -1,0 +1,80 @@
+<!--Referenced from :
+https://github.com/braitsch/node-login
+https://github.com/braitsch/node-login
+https://github.com/scotch-io/easy-node-authentication
+https://scotch.io/tutorials/easy-node-authentication-setup-and-local
+http://www.thatsoftwaredude.com/content/6125/how-to-paginate-through-a-collection-in-javascript
+https://www.djamware.com/post/58eba06380aca72673af8500/node-express-mongoose-and-passportjs-rest-api-authentication
+http://jsfiddle.net/asimshahiddIT/jrjjzw18/
+http://expressjs.com/en/starter/static-files.html
+http://fontawesome.io/examples/
+http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/line-time-series/
+https://jsfiddle.net/jon_a_nygaard/bpnq9px7/
+-->
+<!doctype html>
+<html>
+<head>
+    <title>User Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <style>
+        body {
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+    if (location.href.indexOf('refresh') < 0) {
+        location.href += '?refresh=01';
+    }
+</script>
+<div class="container">
+    <div class=" text-center">
+        <h1><span class="fa fa-anchor"></span> Welcome <%= user.local.username.toUpperCase() %></h1>
+    </div>
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li class="tabClicker" data-tab="profile_info"><a href="#profile_info">Profile Information</a></li>
+            <li class="tabClicker" data-tab="login_history"><a href="#login_history">Login History</a></li>
+            <li class="tabClicker" data-tab="logout"><a href="/logout">Logout</a></li>
+        </ul>
+        <br>
+
+        <div id="profile_info" class="tabContent">
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <div class="well">
+                        <p>
+                            <strong>Username</strong>: <%= user.local.username %><br>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="login_history" class="tabContent" style="display: none">
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $(".tabClicker").click(function () {
+            tab = $(this).attr("data-tab");
+            $(".tabContent").hide();
+            $("#" + tab).show();
+
+            if (tab === "stackoverflow_activity") {
+                activities_load();
+            }
+        });
+    });
+
+</script>
+</body>
+</html>
