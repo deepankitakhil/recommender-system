@@ -9,6 +9,7 @@
  http://jsfiddle.net/asimshahiddIT/jrjjzw18/
 
  */
+var SOPostModel = require('../app/models/post');
 
 module.exports = function (application_root, passport_auth) {
 
@@ -18,6 +19,26 @@ module.exports = function (application_root, passport_auth) {
 
     application_root.get('/login', function (request, response) {
         response.render('login.ejs', {message: request.flash('login-message')});
+    });
+
+    application_root.get('/post/:page', function (request, response, next) {
+        var perPage = 10;
+        var page = request.params.page || 1;
+
+        SOPostModel
+            .find({})
+            .skip((perPage * page) - perPage)
+            .limit(perPage)
+            .exec(function (error, stack_overflow_post) {
+                SOPostModel.count().exec(function (error, count) {
+                    if (error) return next(error);
+                    response.render('post.ejs', {
+                        posts: stack_overflow_post,
+                        current: page,
+                        pages: Math.ceil(count / perPage)
+                    })
+                })
+            })
     });
 
     application_root.post('/login', passport_auth.authenticate('local-login', {
