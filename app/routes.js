@@ -39,7 +39,6 @@ module.exports = function (application_root, passport_auth) {
     application_root.get('/profile', isUserLoggedIn, function (request, response) {
         response.render('profile.ejs', {
             user: request.user,
-            listOfStackOverflowPost: d3.list()
         });
     });
 
