@@ -5,15 +5,8 @@
     <title></title>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="css/index.css">
     <style type="text/css">
-        .recommendationheader {
-            padding: 2px;
-            cursor: pointer;
-        }
-
-        #postDiv {
-            margin: 30px auto;
-        }
 
         span {
             margin: 10px auto;
@@ -42,6 +35,12 @@
     </style>
 </head>
 <body>
+
+<div class="topcorner">
+    <a href="/login" class="btn btn-lg"><span class="fa fa-user" aria-hidden="true"></span>Login</a>
+    <a href="/sign-up" class="btn btn-lg"><span class="fa fa-user" aria-hidden="true"></span>Sign-up</a>
+</div>
+
 <div class="container">
 
 
@@ -54,11 +53,9 @@
         <table id="contentTable" class="table table-striped">
             <table style=" width: 100%; margin:0 auto;">
                 <tr>
-                <tr>
                     <%= beautifyOutput(posts[i].title) %>
                 </tr>
 
-                </tr>
             </table>
         </table>
         <% } %>
