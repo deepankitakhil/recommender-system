@@ -11,7 +11,6 @@
  */
 
 var mongoose_lib = require('mongoose');
-var encryption_lib = require('bcrypt-nodejs');
 
 var userProfileSchema = mongoose_lib.Schema({
 

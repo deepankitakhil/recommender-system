@@ -7,17 +7,41 @@
  http://www.thatsoftwaredude.com/content/6125/how-to-paginate-through-a-collection-in-javascript
  https://www.djamware.com/post/58eba06380aca72673af8500/node-express-mongoose-and-passportjs-rest-api-authentication
  http://jsfiddle.net/asimshahiddIT/jrjjzw18/
-
+https://evdokimovm.github.io/javascript/nodejs/mongodb/pagination/expressjs/ejs/bootstrap/2017/08/20/create-pagination-with-nodejs-mongodb-express-and-ejs-step-by-step-from-scratch.html
  */
+var SOPostModel = require('../app/models/post');
 
 module.exports = function (application_root, passport_auth) {
 
     application_root.get('/', function (request, response) {
-        response.render('index.ejs');
+        response.redirect('/post/1');
     });
 
     application_root.get('/login', function (request, response) {
         response.render('login.ejs', {message: request.flash('login-message')});
+    });
+
+    application_root.get('/post/:page', function (request, response, next) {
+        var perPage = 10;
+        var page = request.params.page || 1;
+
+        SOPostModel
+            .find({"type": "\"question"})
+            .skip((perPage * page) - perPage)
+            .limit(perPage)
+            .exec(function (error, stack_overflow_post) {
+                SOPostModel
+                    .find({"type": "\"question"})
+                    .count()
+                    .exec(function (error, count) {
+                        if (error) return next(error);
+                        response.render('post.ejs', {
+                            posts: stack_overflow_post,
+                            current: page,
+                            pages: Math.ceil(count / perPage)
+                        })
+                    })
+            })
     });
 
     application_root.post('/login', passport_auth.authenticate('local-login', {
