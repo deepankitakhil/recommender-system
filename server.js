@@ -18,7 +18,7 @@ var flash = require('connect-flash');
 
 var configDB = require('./config/database.js');
 
-mongoose.connect(configDB.url,{
+mongoose.connect(configDB.url, {
     server: {
         socketOptions: {
             keepAlive: 1

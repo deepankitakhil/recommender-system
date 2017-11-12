@@ -7,11 +7,11 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "bcrypt-nodejs": "latest",
+    "bcrypt-nodejs": "0.0.3",
     "connect-flash": "~0.1.1",
-    "ejs": "~0.8.5",
-    "express": "~3.4.4",
-    "mongoose": "^4.4.20",
+    "ejs": "^0.8.8",
+    "express": "^3.21.2",
+    "mongoose": "~4.13.1",
     "passport-local": "~0.1.6"
   }
 }
