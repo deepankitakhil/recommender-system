@@ -31,14 +31,11 @@ module.exports = function (application_root, passport_auth) {
         var keyword = request.params.keyword || 'java';
         var item_length;
         var searched_post = [];
-        var perPage = 10;
-        var page = 1;
         nodeSuggestiveSearch.loadJson('../Recommender-System/search/post_title.json')
             .then(() => {
                 nodeSuggestiveSearch.query(keyword).then((data) => {
                         var items = data.itemsId;
                         item_length = items.length;
-                        pageCount = item_length / pageSize;
                         for (var index = 0; index < item_length; index++) {
                             let queryText = buildQueryText(searchElements[items[index]].itemName);
                             searched_post.push(queryText);
@@ -56,10 +53,6 @@ module.exports = function (application_root, passport_auth) {
                                     return next(error);
                                 response.render('search.ejs', {
                                     posts: stack_overflow_post,
-                                    pageSize: pageSize,
-                                    totalPosts: item_length,
-                                    pageCount: pageCount,
-                                    currentPage: currentPage
                                 })
                             })
                     },
