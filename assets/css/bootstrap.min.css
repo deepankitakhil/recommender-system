@@ -1643,7 +1643,10 @@ th {
 }
 
 .table-striped > tbody > tr:nth-child(odd) > td, .table-striped > tbody > tr:nth-child(odd) > th {
+    border-spacing: 0px;
+    padding: 0px;
     background-color: #f9f9f9
+
 }
 
 .table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
