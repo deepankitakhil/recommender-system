@@ -160,6 +160,7 @@ function buildQueryText(input) {
 }
 
 function buildRegex(input) {
+    input = input.replace(/^\s+|\s+$/g, "");
     var wild_card = ".*";
     input = wild_card + stripEndQuotes(input) + wild_card;
     return input;
