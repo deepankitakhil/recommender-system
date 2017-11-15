@@ -68,7 +68,7 @@
         <% if (current == 1) { %>
         <li class="disabled"><a>First</a></li>
         <% } else { %>
-        <li><a href="/post/1">First</a></li>
+        <li><a href="/search_results/1">First</a></li>
         <% } %>
         <% i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
         <% if (i !== 1) { %>
@@ -78,7 +78,7 @@
         <% if (i == current) { %>
         <li class="active"><a><%= i %></a></li>
         <% } else { %>
-        <li><a href="/post/<%= i %>"><%= i %></a></li>
+        <li><a href="/search_results/<%= i %>"><%= i %></a></li>
         <% } %>
         <% if (i == Number(current) + 4 && i < pages) { %>
         <li class="disabled"><a>...</a></li>
@@ -87,7 +87,7 @@
         <% if (current == pages) { %>
         <li class="disabled"><a>Last</a></li>
         <% } else { %>
-        <li><a href="/post/<%= pages %>">Last</a></li>
+        <li><a href="/search_results/<%= pages %>">Last</a></li>
         <% } %>
     </ul>
     <% } %>

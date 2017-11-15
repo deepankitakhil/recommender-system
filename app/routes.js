@@ -69,7 +69,7 @@ module.exports = function (application_root, passport_auth) {
         var currentPageContent = paginate(searchResults, page, perPage);
         response.render('search_results.ejs', {
             posts: currentPageContent.pageData,
-            current: currentPageContent.nextPage,
+            current: currentPageContent.nextPage - 1,
             pages: currentPageContent.totalCount
         })
     });
@@ -182,6 +182,6 @@ function paginate(searchList, page, perPage) {
     return {
         pageData: pageList,
         nextPage: page < lastPage ? page + 1 : null,
-        totalCount: totalCount
+        totalCount: lastPage
     }
 }
