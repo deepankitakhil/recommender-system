@@ -97,6 +97,25 @@ module.exports = function (application_root, passport_auth) {
             })
     });
 
+    application_root.get('/fetch_post/:title', function (request, response, next) {
+        var title = request.params.title;
+        if (title === undefined)
+            response.render('answers.ejs', {
+                posts: [],
+            });
+        else
+            title = buildRegex(title);
+
+        SOPostModel
+            .find({"title": {'$regex': title}})
+            .exec(function (error, stack_overflow_post) {
+                if (error) return next(error);
+                response.render('answers.ejs', {
+                    posts: stack_overflow_post,
+                })
+            });
+    });
+
     application_root.post('/login', passport_auth.authenticate('local-login', {
         successRedirect: '/profile',
         failureRedirect: '/login',
@@ -137,6 +156,12 @@ function buildQueryText(input) {
     var slash = "\\";
     var double_quotes = "\"";
     input = slash + double_quotes + stripEndQuotes(input) + slash + double_quotes;
+    return input;
+}
+
+function buildRegex(input) {
+    var wild_card = ".*";
+    input = wild_card + stripEndQuotes(input) + wild_card;
     return input;
 }
 
