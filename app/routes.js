@@ -14,6 +14,7 @@ var SOPostModel = require('../app/models/post');
 var nodeSuggestiveSearch = nss = require('../search/search.js').init(undefined);
 const fs = require('fs');
 var searchElements = [];
+var searchResults = [];
 module.exports = function (application_root, passport_auth) {
 
     application_root.get('/', function (request, response) {
@@ -51,9 +52,8 @@ module.exports = function (application_root, passport_auth) {
                             .exec(function (error, stack_overflow_post) {
                                 if (error)
                                     return next(error);
-                                response.render('search.ejs', {
-                                    posts: stack_overflow_post,
-                                })
+                                searchResults = stack_overflow_post;
+                                response.redirect('search_results/1');
                             })
                     },
                     error => {
@@ -61,6 +61,17 @@ module.exports = function (application_root, passport_auth) {
                     }
                 )
             });
+    });
+
+    application_root.get('/search_results/:page', function (request, response) {
+        var page = parseInt(request.params.page || 1);
+        var perPage = 10;
+        var currentPageContent = paginate(searchResults, page, perPage);
+        response.render('search_results.ejs', {
+            posts: currentPageContent.pageData,
+            current: currentPageContent.nextPage,
+            pages: currentPageContent.totalCount
+        })
     });
 
     application_root.get('/post/:page', function (request, response, next) {
@@ -134,4 +145,17 @@ function stripEndQuotes(input) {
     if (input.charAt(0) === '"') input = input.substring(1, input_length--);
     if (input.charAt(--input_length) === '"') input = input.substring(0, input_length);
     return input;
+}
+
+function paginate(searchList, page, perPage) {
+    var totalCount = searchList.length;
+    var lastPage = Math.floor(totalCount / perPage);
+    var sliceBegin = page * perPage;
+    var sliceEnd = sliceBegin + perPage;
+    var pageList = searchList.slice(sliceBegin, sliceEnd);
+    return {
+        pageData: pageList,
+        nextPage: page < lastPage ? page + 1 : null,
+        totalCount: totalCount
+    }
 }
