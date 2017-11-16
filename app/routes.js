@@ -38,8 +38,10 @@ module.exports = function (application_root, passport_auth) {
                         var items = data.itemsId;
                         item_length = items.length;
                         for (var index = 0; index < item_length; index++) {
-                            let queryText = buildQueryText(searchElements[items[index]].itemName);
-                            searched_post.push(queryText);
+                            if (searchElements[items[index]] !== undefined) {
+                                let queryText = buildQueryText(searchElements[items[index]].itemName);
+                                searched_post.push(queryText);
+                            }
                         }
 
                         SOPostModel
@@ -110,9 +112,17 @@ module.exports = function (application_root, passport_auth) {
             .find({"title": {'$regex': title}})
             .exec(function (error, stack_overflow_post) {
                 if (error) return next(error);
-                response.render('answers.ejs', {
-                    posts: stack_overflow_post,
-                })
+                if (stack_overflow_post !== undefined && stack_overflow_post.length > 0) {
+                    response.render('answers.ejs', {
+                        posts: stack_overflow_post,
+                    })
+                }
+                else {
+                    response.render('error.ejs', {
+                        posts: stack_overflow_post,
+                    })
+                }
+
             });
     });
 
@@ -162,8 +172,25 @@ function buildQueryText(input) {
 function buildRegex(input) {
     input = input.replace(/^\s+|\s+$/g, "");
     var wild_card = ".*";
+    input = escapeHtml(input);
     input = wild_card + stripEndQuotes(input) + wild_card;
     return input;
+}
+
+function escapeHtml(input) {
+    var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+        '.': '',
+        "_": '/'
+    };
+
+    return input.replace(/[&<>"'_]/g, function (key) {
+        return map[key];
+    });
 }
 
 function stripEndQuotes(input) {
