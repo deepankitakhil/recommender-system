@@ -14,6 +14,8 @@ var SOPostModel = require('../app/models/post');
 var nodeSuggestiveSearch = nss = require('../search/search.js').init(undefined);
 const fs = require('fs');
 var searchElements = [];
+var tags = [];
+var tagsInJSONFormat = [];
 var searchResults = [];
 module.exports = function (application_root, passport_auth) {
 
@@ -26,6 +28,20 @@ module.exports = function (application_root, passport_auth) {
 
     application_root.get('/login', function (request, response) {
         response.render('login.ejs', {message: request.flash('login-message')});
+    });
+
+    application_root.get('/tag_search', function (request, response) {
+        if (tags === undefined || tags.length === 0) {
+            var rawData = fs.readFileSync('../Recommender-System/search/tag_search/tags.json');
+            tagsInJSONFormat = JSON.parse(rawData);
+            for (var index = 0; index < tagsInJSONFormat.length; index++) {
+                tags.push(tagsInJSONFormat[index].tag);
+            }
+        }
+        response.render('sign-up.ejs', {
+            available_tags: JSON.stringify(tags),
+            message: request.flash('sign-up-message')
+        });
     });
 
     application_root.get('/search/:keyword', function (request, response, next) {
@@ -133,7 +149,7 @@ module.exports = function (application_root, passport_auth) {
     }));
 
     application_root.get('/sign-up', function (request, response) {
-        response.render('sign-up.ejs', {message: request.flash('sign-up-message')});
+        response.redirect('/tag_search');
     });
 
     application_root.post('/sign-up', passport_auth.authenticate('local-sign-up', {
