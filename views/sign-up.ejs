@@ -12,12 +12,6 @@ http://fontawesome.io/examples/-->
 <html>
 <head>
     <title>Sign Up</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/font-awesome.css">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="/js/d3.js"></script>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/font-awesome.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -46,8 +40,7 @@ http://fontawesome.io/examples/-->
 
 
 <script>
-    var data = <%- available_tags %>
-        console.log(data);
+
 </script>
 
 
@@ -71,7 +64,9 @@ http://fontawesome.io/examples/-->
             <select id="boot-multiselect-demo" multiple="multiple">
             </select>
                 <script>
-                    var cuisines = ["Chinese","Indian"];
+                    var data = <%- available_tags %>
+                        console.log(data);
+                    var cuisines = data;
                     var sel = document.getElementById('boot-multiselect-demo');
                     for(var i = 0; i < cuisines.length; i++) {
                         var opt = document.createElement('option');
