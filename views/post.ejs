@@ -23,7 +23,7 @@
             }
             function callSearch()
             {
-                location.href = "/search/"+document.getElementById('mySearch').value;
+                location.href = "/search/"+document.getElementById('srch-term').value;
             }
         </script>
         <button type="button" class="btn btn-warning" onclick="signUp()">Sign Up</button>
@@ -42,12 +42,19 @@
         </script>
 
     </section>
-    <section class="container text-left">
-        <input type="search" id="mySearch" placeholder="Search for something.." size="70">
-        <br>
-        <br>
-        <button type="button" class="btn" onclick="callSearch()">Search</button>
-    </section>
+
+
+            <input class="form-control-custom" placeholder="Search" name="srch-term" id="srch-term" type="text">
+            <button class="btn btn-default" type="submit" onclick="callSearch()" id="searchButton" style="visibility: hidden"><i class="glyphicon glyphicon-search"></i></button>
+    <script>
+        $("#srch-term").keyup(function(event) {
+            if (event.keyCode == 13) {
+                $("#searchButton").click();
+            }
+        });
+
+    </script>
+
     <div style="margin-top: 30px">
         <% function beautifyOutput(input) {
             var stringInput = input.replace("\"", "").replace("\\", "")
@@ -120,10 +127,25 @@
     <% } %>
     <script>
 
-        $(function(){
-            $('.clicked_post').click(function(){
-                url="/fetch_post/"+$(this).text()
-                $('a').attr('href',url)
+
+        function escapeHtml(input) {
+            var map = {
+
+                '<': '&lt;',
+                '>': '&gt;',
+                "/": '_'
+            };
+
+            return input.replace(/[<>/]/g, function (key) {
+                return map[key];
+            });
+        }
+
+        $(function () {
+            $('.clicked_post').click(function () {
+                let context = String(escapeHtml($(this).text().trim()));
+                url = "/fetch_post/" + context;
+                $('a').attr('href', url)
             });
         });
 
