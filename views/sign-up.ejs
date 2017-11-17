@@ -7,7 +7,8 @@ http://www.thatsoftwaredude.com/content/6125/how-to-paginate-through-a-collectio
 https://www.djamware.com/post/58eba06380aca72673af8500/node-express-mongoose-and-passportjs-rest-api-authentication
 http://jsfiddle.net/asimshahiddIT/jrjjzw18/
 http://expressjs.com/en/starter/static-files.html
-http://fontawesome.io/examples/-->
+http://fontawesome.io/examples/
+https://www.jquery-az.com/boots/demo.php?ex=63.0_9-->
 <!doctype html>
 <html>
 <head>
@@ -28,9 +29,9 @@ http://fontawesome.io/examples/-->
 <body>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#boot-multiselect-demo').multiselect()({
+        $('#boot-multiselect-demo').multiselect({
             includeSelectAllOption: true,
-            buttonWidth: 400,
+            buttonWidth: 540,
             enableFiltering: true
         });
     });
@@ -46,7 +47,7 @@ http://fontawesome.io/examples/-->
 
 <div class="container">
     <div class="col-sm-6 col-sm-offset-3">
-        <h1><span class="fa"></span>Sign-up</h1>
+        <h1><span class="fa"></span>Sign-up</h1><br>
         <% if (message.length > 0) { %>
         <div class="alert alert-danger"><%= message %></div>
         <% } %>
@@ -61,28 +62,48 @@ http://fontawesome.io/examples/-->
             </div>
 
             <div class="form-group">
-            <select id="boot-multiselect-demo" multiple="multiple">
+            <label>Select Tags</label>
+                <br>
+
+            <select id="boot-multiselect-demo" multiple="multiple" class="form-control">
             </select>
                 <script>
                     var data = <%- available_tags %>
                         console.log(data);
                     var cuisines = data;
                     var sel = document.getElementById('boot-multiselect-demo');
-                    for(var i = 0; i < cuisines.length; i++) {
+                    for(var i = 0; i < cuisines.length/200; i++) {
                         var opt = document.createElement('option');
                         opt.innerHTML = cuisines[i];
                         opt.value = cuisines[i];
                         sel.appendChild(opt);
                     }
+                    function getTags() {
+                        var allVal=$("#boot-multiselect-demo").val();
+                        alert(allVal);
+                        return false;
+                    }
                 </script>
             </div>
-            <button type="submit" class="btn btn-default btn-lg">Sign Up</button>
+
+                <label for="inputlg">What Describes you?</label>
+                <textarea class="form-control" rows="5" id="comment"></textarea>
+
         </form>
-
-
-        <p>Already have an account? <a href="/login">Login</a></p>
-        <p>Or click <a href="/">here</a> to start again.</p>
     </div>
+            <div class="col-md-4 text-center col-sm-offset-4" style="margin-top: 30px">
+
+            <button type="submit" class="btn btn-default btn-lg" onclick="getTags()" >Sign Up</button>
+            <br>
+            <br>
+                <p>Already have an account? <a href="/login">Login</a></p>
+                <p>Or click <a href="/">here</a> to start again.</p>
+            </div>
+
+
+
+
+
 </div>
 </body>
 </html>
