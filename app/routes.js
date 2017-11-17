@@ -69,13 +69,17 @@ module.exports = function (application_root, passport_auth) {
                             })
                             .exec(function (error, stack_overflow_post) {
                                 if (error)
-                                    return next(error);
+                                    response.render('error.ejs', {
+                                        posts: [],
+                                    });
                                 searchResults = stack_overflow_post;
                                 response.redirect('search_results/1');
                             })
                     },
                     error => {
-                        console.log(error);
+                        response.render('error.ejs', {
+                            posts: [],
+                        });
                     }
                 )
             });
@@ -105,7 +109,10 @@ module.exports = function (application_root, passport_auth) {
                     .find({"type": "\"question"})
                     .count()
                     .exec(function (error, count) {
-                        if (error) return next(error);
+                        if (error)
+                            response.render('error.ejs', {
+                                posts: [],
+                            });
                         response.render('post.ejs', {
                             posts: stack_overflow_post,
                             current: page,
@@ -127,7 +134,10 @@ module.exports = function (application_root, passport_auth) {
         SOPostModel
             .find({"title": {'$regex': title}})
             .exec(function (error, stack_overflow_post) {
-                if (error) return next(error);
+                if (error)
+                    response.render('error.ejs', {
+                        posts: [],
+                    });
                 if (stack_overflow_post !== undefined && stack_overflow_post.length > 0) {
                     response.render('answers.ejs', {
                         posts: stack_overflow_post,

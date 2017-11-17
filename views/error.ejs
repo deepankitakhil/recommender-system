@@ -10,39 +10,14 @@
 </head>
 <body>
 
-
-<div class="container" style="margin-top: 30px">
-    <section class="container text-right">
-        <div class="btn-toolbar">
-
-            <button type="button" class="btn btn-primary" onclick="goToLogin()">Login</button>
-            <script>
-                function goToLogin() {
-                    location.href = "/login";
-                }
-
-                function callSearch() {
-                    location.href = "/search/" + document.getElementById('mySearch').value;
-                }
-            </script>
-            <button type="button" class="btn btn-warning" onclick="signUp()">Sign Up</button>
-            <script>
-                function signUp() {
-                    location.href = "/sign-up";
-                }
-            </script>
-        </div>
-
-    </section>
-    <section class="container text-left">
-        <input type="search" id="mySearch" placeholder="Search for something.." size="70">
-        <br>
-        <br>
-        <button type="button" class="btn" onclick="callSearch()">Search</button>
-    </section>
-</div>
 <p>
-    This is not supposed to happen. We are informed about this and we are working on it to fix it.
+    <img src="/images/error_image.png" height="70%" width="70%"
+         alt="Looks like we couldn't connect ansychronously with DB to serve you better. Please try again later.">
+
+</p>
+
+<p>
+    <h> Click <a href="/">here</a> to start again.</h>
 </p>
 </body>
 </html>
