@@ -195,7 +195,7 @@ function buildRegex(input) {
 
 function escapeHtml(input) {
     var map = {
-        '&': '&amp;',
+
         '<': '&lt;',
         '>': '&gt;',
         '"': '&quot;',
@@ -204,7 +204,7 @@ function escapeHtml(input) {
         "_": '/'
     };
 
-    return input.replace(/[&<>"'_]/g, function (key) {
+    return input.replace(/[<>"'_]/g, function (key) {
         return map[key];
     });
 }

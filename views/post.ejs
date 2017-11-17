@@ -16,27 +16,24 @@
         <div class="btn-toolbar">
 
             <button type="button" class="btn btn-primary" onclick="goToLogin()">Login</button>
-        <script>
-            function goToLogin()
-            {
-                location.href = "/login";
-            }
-            function callSearch()
-            {
-                location.href = "/search/"+document.getElementById('srch-term').value;
-            }
-        </script>
-        <button type="button" class="btn btn-warning" onclick="signUp()">Sign Up</button>
-        <script>
-            function signUp()
-            {
-                location.href = "/sign-up";
-            }
-        </script>
+            <script>
+                function goToLogin() {
+                    location.href = "/login";
+                }
+
+                function callSearch() {
+                    location.href = "/search/" + document.getElementById('srch-term').value;
+                }
+            </script>
+            <button type="button" class="btn btn-warning" onclick="signUp()">Sign Up</button>
+            <script>
+                function signUp() {
+                    location.href = "/sign-up";
+                }
+            </script>
         </div>
         <script>
-            function showPost()
-            {
+            function showPost() {
                 location.href = "/sign-up";
             }
         </script>
@@ -44,10 +41,11 @@
     </section>
 
 
-            <input class="form-control-custom" placeholder="Search" name="srch-term" id="srch-term" type="text">
-            <button class="btn btn-default" type="submit" onclick="callSearch()" id="searchButton" style="visibility: hidden"><i class="glyphicon glyphicon-search"></i></button>
+    <input class="form-control-custom" placeholder="Search" name="srch-term" id="srch-term" type="text">
+    <button class="btn btn-default" type="submit" onclick="callSearch()" id="searchButton" style="visibility: hidden"><i
+                class="glyphicon glyphicon-search"></i></button>
     <script>
-        $("#srch-term").keyup(function(event) {
+        $("#srch-term").keyup(function (event) {
             if (event.keyCode == 13) {
                 $("#searchButton").click();
             }
@@ -61,37 +59,34 @@
             stringInput = stringInput.substr(0, stringInput.length - 2)
             return stringInput;
         } for (var i = 0; i < posts.length; i++) { %>
-        <table id="contentTable" class="table table-striped table-dark" >
+        <table id="contentTable" class="table table-striped table-dark">
             <tr>
-            <td class="posts" colspan="50">
-                <a class="clicked_post" href="">
+                <td class="posts" colspan="50">
+                    <a class="clicked_post" href="">
 
-                    <%= beautifyOutput(posts[i].title) %>
-                </a>
+                        <%= beautifyOutput(posts[i].title) %>
+                    </a>
 
-            </td>
+                </td>
             </tr>
             <tr>
-            <td align="left">
+                <td align="left">
 
-            <% var string = posts[i].tag;
-                var res = string.split(" ");
-                var stringArray = new Array();
-            for(var j =0; j < res.length; j++){
-                if(res[j]!='java') {
-                    stringArray.push(res[j]);
-                }
-                }
+                    <% var string = posts[i].tag;
+                        var res = string.split(" ");
+                        var stringArray = new Array();
+                        for (var j = 0; j < res.length; j++) {
+                            if (res[j] != 'java') {
+                                stringArray.push(res[j]);
+                            }
+                        }
 
-            for (var k=0;k<stringArray.length-1;k++){%>
+                    for (var k = 0;k < stringArray.length - 1;k++){ %>
 
+                    <button type="button" class="btn btn-info"><%= stringArray[k] %></button>
 
-                    <button type="button" class="btn btn-info"><%=stringArray[k]%></button>
-
-
-
-            <% } %>
-            </td>
+                    <% } %>
+                </td>
             </tr>
         </table>
         <% } %>
@@ -130,13 +125,11 @@
 
         function escapeHtml(input) {
             var map = {
-
-                '<': '&lt;',
-                '>': '&gt;',
+                '&': '&amp;',
                 "/": '_'
             };
 
-            return input.replace(/[<>/]/g, function (key) {
+            return input.replace(/[&/]/g, function (key) {
                 return map[key];
             });
         }
