@@ -96,6 +96,33 @@ module.exports = function (application_root, passport_auth) {
         })
     });
 
+    application_root.get('/personalized_post/:page', function (request, response, next) {
+        var perPage = 10;
+        var page = request.params.page || 1;
+
+        SOPostModel
+            .find({"type": "\"question"})
+            .skip((perPage * page) - perPage)
+            .limit(perPage)
+            .exec(function (error, stack_overflow_post) {
+                SOPostModel
+                    .find({"type": "\"question"})
+                    .count()
+                    .exec(function (error, count) {
+                        if (error)
+                            response.render('error.ejs', {
+                                posts: [],
+                            });
+                        response.render('personalized_post.ejs', {
+                            posts: stack_overflow_post,
+                            current: page,
+                            pages: Math.ceil(count / perPage)
+                        })
+                    })
+            })
+    });
+
+
     application_root.get('/post/:page', function (request, response, next) {
         var perPage = 10;
         var page = request.params.page || 1;
@@ -121,6 +148,38 @@ module.exports = function (application_root, passport_auth) {
                     })
             })
     });
+
+
+    application_root.get('/fetch_personalized_post/:title', function (request, response, next) {
+        var title = request.params.title;
+        if (title === undefined)
+            response.render('answers.ejs', {
+                posts: [],
+            });
+        else
+            title = buildRegex(title);
+
+        SOPostModel
+            .find({"title": {'$regex': title}})
+            .exec(function (error, stack_overflow_post) {
+                if (error)
+                    response.render('error.ejs', {
+                        posts: [],
+                    });
+                if (stack_overflow_post !== undefined && stack_overflow_post.length > 0) {
+                    response.render('personalized_answers.ejs', {
+                        posts: stack_overflow_post,
+                    })
+                }
+                else {
+                    response.render('error.ejs', {
+                        posts: stack_overflow_post,
+                    })
+                }
+
+            });
+    });
+
 
     application_root.get('/fetch_post/:title', function (request, response, next) {
         var title = request.params.title;
