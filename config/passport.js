@@ -1,5 +1,6 @@
 var LocalStrategy = require('passport-local').Strategy;
 var UserModel = require('../app/models/user_login');
+var UserProfile = require('../app/models/user_profile');
 
 module.exports = function (passport) {
     passport.serializeUser(function (user, on_result) {
@@ -31,6 +32,19 @@ module.exports = function (passport) {
                     newUser.save(function (error) {
                         if (error)
                             throw error;
+                        else {
+                            var userProfile = new UserProfile();
+                            userProfile.local.username = username;
+                            userProfile.local.bio = request.body.userbio;
+                            userProfile.local.user_tags = request.body.tags_selector;
+                            userProfile.local.following = [];
+                            userProfile.local.followers = [];
+                            userProfile.local.temporary_user_tags = [];
+                            userProfile.save(function (error) {
+                                if (error)
+                                    throw error;
+                            });
+                        }
                         return on_result(null, newUser);
                     });
                 }

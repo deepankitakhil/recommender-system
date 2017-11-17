@@ -27,7 +27,7 @@ https://www.jquery-az.com/boots/demo.php?ex=63.0_9-->
 </head>
 <body>
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#boot-multiselect-demo').multiselect({
             includeSelectAllOption: true,
             buttonWidth: 540,
@@ -35,8 +35,6 @@ https://www.jquery-az.com/boots/demo.php?ex=63.0_9-->
         });
     });
 </script>
-
-
 
 
 <script>
@@ -61,43 +59,39 @@ https://www.jquery-az.com/boots/demo.php?ex=63.0_9-->
             </div>
 
             <div class="form-group">
-            <label>Select Tags</label>
+                <label>Select Tags</label>
                 <br>
 
-            <select id="boot-multiselect-demo" multiple="multiple" class="form-control">
-            </select>
+                <select id="boot-multiselect-demo" multiple="multiple" class="form-control" name="tags_selector">
+                </select>
                 <script>
-                    var data=<%-available_tags%>;
-                    var sel = document.getElementById('boot-multiselect-demo');
-                    for(var i = 0; i < data.length/200; i++) {
-                        var opt = document.createElement('option');
-                        opt.innerHTML = data[i];
-                        opt.value = data[i];
-                        sel.appendChild(opt);
-                    }
-                    function getTags() {
-                        var allVal=$("#boot-multiselect-demo").val();
+                    var data = <%- available_tags %>;
+                    var selector = document.getElementById('boot-multiselect-demo');
+                    for (var i = 0; i < data.length / 200; i++) {
+                        var option = document.createElement('option');
+                        option.innerHTML = data[i];
+                        option.value = data[i];
+                        selector.appendChild(option);
                     }
                 </script>
             </div>
 
-                <label for="inputlg">What Describes you?</label>
-                <textarea class="form-control" rows="5" id="comment"></textarea>
-
+            <label for="inputlg">What Describes you?</label>
+            <textarea class="form-control" rows="5" id="comment" name="userbio"></textarea>
 
 
             <div class="col-md-4 text-center col-sm-offset-4" style="margin-top: 30px">
 
-            <button type="submit" class="btn btn-default btn-lg" onclick="getTags()" >Sign Up</button>
-            <br>
-            <br>
+                <button type="submit" class="btn btn-default btn-lg">Sign Up</button>
+                <br>
+                <br>
             </div>
             <div style="margin-top: 100px;margin-left: 170px">
                 <p>Already have an account? <a href="/login">Login</a></p>
                 <p style="margin-left: 20px">Click <a href="/">here</a> to start again</p>
             </div>
 
-    </form>
+        </form>
     </div>
 </div>
 </body>
