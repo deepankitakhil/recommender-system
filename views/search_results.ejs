@@ -47,7 +47,7 @@
     <button class="btn btn-default" type="submit" onclick="callSearch()" id="searchButton" style="visibility: hidden"><i class="glyphicon glyphicon-search"></i></button>
     <script>
         $("#srch-term").keyup(function(event) {
-            if (event.keyCode == 13) {
+            if (event.keyCode === 13) {
                 $("#searchButton").click();
             }
         });
@@ -74,7 +74,7 @@
 
                     <% var string = posts[i].tag;
                         var res = string.split(" ");
-                        var stringArray = new Array();
+                        var stringArray = [];
                         for(var j =0; j < res.length; j++){
                             if(res[j]!='java') {
                                 stringArray.push(res[j]);

@@ -85,6 +85,58 @@ module.exports = function (application_root, passport_auth) {
             });
     });
 
+    application_root.get('/personalized_search/:keyword', isUserLoggedIn, function (request, response, next) {
+        var keyword = request.params.keyword || 'java';
+        var item_length;
+        var searched_post = [];
+        nodeSuggestiveSearch.loadJson('../Recommender-System/search/post_title.json')
+            .then(() => {
+                nodeSuggestiveSearch.query(keyword).then((data) => {
+                        var items = data.itemsId;
+                        item_length = items.length;
+                        for (var index = 0; index < item_length; index++) {
+                            if (searchElements[items[index]] !== undefined) {
+                                let queryText = buildQueryText(searchElements[items[index]].itemName);
+                                searched_post.push(queryText);
+                            }
+                        }
+
+                        SOPostModel
+                            .find({
+                                $and: [
+                                    {"title": {$in: searched_post}},
+                                    {"type": "\"question"}
+                                ]
+                            })
+                            .exec(function (error, stack_overflow_post) {
+                                if (error)
+                                    response.render('error.ejs', {
+                                        posts: [],
+                                    });
+                                searchResults = stack_overflow_post;
+                                response.redirect('personalized_search_results/1');
+                            })
+                    },
+                    error => {
+                        response.render('error.ejs', {
+                            posts: [],
+                        });
+                    }
+                )
+            });
+    });
+
+    application_root.get('/personalized_search_results/:page', isUserLoggedIn, function (request, response) {
+        var page = parseInt(request.params.page || 1);
+        var perPage = 10;
+        var currentPageContent = paginate(searchResults, page, perPage);
+        response.render('personalized_search_results.ejs', {
+            posts: currentPageContent.pageData,
+            current: currentPageContent.nextPage - 1,
+            pages: currentPageContent.totalCount
+        })
+    });
+
     application_root.get('/search_results/:page', function (request, response) {
         var page = parseInt(request.params.page || 1);
         var perPage = 10;
@@ -96,7 +148,7 @@ module.exports = function (application_root, passport_auth) {
         })
     });
 
-    application_root.get('/personalized_post/:page', function (request, response, next) {
+    application_root.get('/personalized_post/:page', isUserLoggedIn, function (request, response, next) {
         var perPage = 10;
         var page = request.params.page || 1;
 
@@ -150,7 +202,7 @@ module.exports = function (application_root, passport_auth) {
     });
 
 
-    application_root.get('/fetch_personalized_post/:title', function (request, response, next) {
+    application_root.get('/fetch_personalized_post/:title', isUserLoggedIn, function (request, response, next) {
         var title = request.params.title;
         if (title === undefined)
             response.render('answers.ejs', {
