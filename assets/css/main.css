@@ -1,8 +1,11 @@
 td.posts {
     font-family: Calibri, "Helvetica", san-serif;
     line-height: 1.5em;
-    color: #5bc0de;
+    color: red;
     font-size: 20px;
+    border-top: 1px solid #ddd;
+
+
 
 }
 .form-control-custom {
@@ -40,4 +43,19 @@ input-group-btn-custom{
     position: absolute;
     display: table-cell;
 
+}
+a.anchor_post{
+    color: dodgerblue;
+
+}
+td.last_td{
+    margin-top: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+table.post_table{
+    margin-bottom: 40px;
+    background-color: #ebcccc;
+    width: 100%;
+    background-color: transparent
 }

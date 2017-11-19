@@ -30,15 +30,20 @@
                 function signUp() {
                     location.href = "/sign-up";
                 }
+                function postByTags() {
+
+                    var fired_button = $(this).val();
+                    location.href = "/search/" + fired_button;
+                }
             </script>
+
         </div>
 
     </section>
     <section class="container text-left">
-        <input type="search" id="mySearch" placeholder="Search for something.." size="70">
-        <br>
-        <br>
-        <button type="button" class="btn" onclick="callSearch()">Search</button>
+        <input class="form-control-custom" placeholder="Search" name="srch-term" id="srch-term" type="text">
+        <button class="btn btn-default" type="submit" onclick="callSearch()" id="searchButton" style="visibility: hidden"><i
+                    class="glyphicon glyphicon-search"></i></button>
     </section>
     <div style="margin-top: 30px">
         <% function beautifyOutput(input) {
@@ -83,7 +88,7 @@
 
                 for (var k = 0;k < stringArray.length - 1;k++){ %>
 
-                <button type="button" class="btn btn-info"><%= stringArray[k] %></button>
+                <button type="submit" class="btn btn-info" value= '<%=stringArray[k]%>' onclick="postByTags.call(this)"><%= stringArray[k] %></button>
 
                 <% } %>
             </td>

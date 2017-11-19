@@ -39,6 +39,11 @@
                 $("#searchButton").click();
             }
         });
+        function postByTags() {
+
+            var fired_button = $(this).val();
+            location.href = "/search/" + fired_button;
+        }
 
     </script>
 
@@ -85,7 +90,7 @@
 
                 for (var k = 0;k < stringArray.length - 1;k++){ %>
 
-                <button type="button" class="btn btn-info"><%= stringArray[k] %></button>
+                <button type="submit" class="btn btn-info" value= '<%=stringArray[k]%>' onclick="postByTags.call(this)"><%= stringArray[k] %></button>
 
                 <% } %>
             </td>
