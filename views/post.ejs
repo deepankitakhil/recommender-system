@@ -17,12 +17,18 @@
 
             <button type="button" class="btn btn-primary" onclick="goToLogin()">Login</button>
             <script>
+
                 function goToLogin() {
                     location.href = "/login";
                 }
 
                 function callSearch() {
                     location.href = "/search/" + document.getElementById('srch-term').value;
+                }
+                function postByTags() {
+
+                    var fired_button = $(this).val();
+                    location.href = "/search/" + fired_button;
                 }
             </script>
             <button type="button" class="btn btn-warning" onclick="signUp()">Sign Up</button>
@@ -74,7 +80,7 @@
 
                     <% var string = posts[i].tag;
                         var res = string.split(" ");
-                        var stringArray = new Array();
+                        var stringArray = [];
                         for (var j = 0; j < res.length; j++) {
                             if (res[j] != 'java') {
                                 stringArray.push(res[j]);
@@ -83,7 +89,7 @@
 
                     for (var k = 0;k < stringArray.length - 1;k++){ %>
 
-                    <button type="button" class="btn btn-info"><%= stringArray[k] %></button>
+                    <button type="submit" class="btn btn-info" value= '<%=stringArray[k]%>' onclick="postByTags.call(this)"><%= stringArray[k] %></button>
 
                     <% } %>
                 </td>
