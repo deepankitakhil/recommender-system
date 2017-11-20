@@ -1,0 +1,61 @@
+td.posts {
+    font-family: Calibri, "Helvetica", san-serif;
+    line-height: 1.5em;
+    color: red;
+    font-size: 20px;
+    border-top: 1px solid #ddd;
+
+
+
+}
+.form-control-custom {
+
+    display: block;
+    width: 50%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.428571429;
+    color: #555;
+    vertical-align: middle;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+}
+.custom-input-group{
+    padding: 6px;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1;
+    text-align: center;
+    border-radius: 0;
+    white-space: nowrap;
+    height: auto
+
+}
+input-group-btn-custom{
+    margin-top: 0%;
+    position: absolute;
+    display: table-cell;
+
+}
+a.anchor_post{
+    color: dodgerblue;
+
+}
+td.last_td{
+    margin-top: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+table.post_table{
+    margin-bottom: 40px;
+    background-color: #ebcccc;
+    width: 70%;
+    background-color: transparent
+}
