@@ -173,11 +173,17 @@ module.exports = function (application_root, passport_auth) {
         UserProfileModel
             .find({"local.username": request.user.local.username})
             .exec(function (error, user_info) {
+                if (error)
+                    throw error;
+
+                for (var index = 0; index < user_info[0].local.user_tags.length; index++) {
+
+                }
                 SOPostModel
                     .find({
                         $and: [
                             {"type": "\"question"},
-                            {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, " ")}},
+                            {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, "|")}},
                         ]
                     })
                     .skip((perPage * page) - perPage)
@@ -187,7 +193,7 @@ module.exports = function (application_root, passport_auth) {
                             .find({
                                 $and: [
                                     {"type": "\"question"},
-                                    {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, " ")}},
+                                    {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, "|")}},
                                 ]
                             })
                             .count()
