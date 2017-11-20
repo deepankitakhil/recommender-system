@@ -17,31 +17,25 @@
 
             <button type="button" class="btn btn-primary" onclick="goToLogin()">Login</button>
             <script>
-                function goToLogin()
-                {
+                function goToLogin() {
                     location.href = "/login";
                 }
-                function callSearch()
-                {
-                    location.href = "/search/"+document.getElementById('mySearch').value;
+
+                function callSearch() {
+                    location.href = "/personalized_search/" + document.getElementById('srch-term').value;
                 }
             </script>
             <button type="button" class="btn btn-warning" onclick="signUp()">Sign Up</button>
             <script>
-                function signUp()
-                {
+                function signUp() {
                     location.href = "/sign-up";
                 }
             </script>
         </div>
         <script>
-            function showPost()
-            {
-                location.href = "/sign-up";
-            }
+
             function change_glyph() {
                 $(this).toggleClass('glyphicon-star-empty').toggleClass('glyphicon-star');
-                //alert($(this).attr('id'));
 
             }
         </script>
@@ -52,11 +46,12 @@
     <button class="btn btn-default" type="submit" onclick="callSearch()" id="searchButton" style="visibility: hidden"><i
                 class="glyphicon glyphicon-search"></i></button>
     <script>
-        $("#srch-term").keyup(function(event) {
+        $("#srch-term").keyup(function (event) {
             if (event.keyCode === 13) {
                 $("#searchButton").click();
             }
         });
+
         function postByTags() {
 
             var fired_button = $(this).val();
@@ -73,8 +68,10 @@
             <tr>
                 <td class="posts" colspan="50">
 
-                    <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true" style="color: #5e5e5e"></span> <%=posts[i].vote%>
-                    <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true" style="color: #5e5e5e;padding-left: 8px"></span> 0
+                    <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"
+                          style="color: #5e5e5e"></span> <%= posts[i].vote %>
+                    <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"
+                          style="color: #5e5e5e;padding-left: 8px"></span> 0
 
                     <a href="" style="padding-left: 50px" class="clicked_post">
 
@@ -85,7 +82,9 @@
             <tr>
                 <td colspan="50">
 
-                    <span id="<%=posts[i].title%>" class="glyphicon glyphicon-star-empty" aria-hidden="true" style="color: #5e5e5e;font-size: 26px;padding-left: 26px;padding-top: 10px" onclick="change_glyph.call(this)"></span>
+                    <span id="<%= posts[i].title %>" class="glyphicon glyphicon-star-empty" aria-hidden="true"
+                          style="color: #5e5e5e;font-size: 26px;padding-left: 26px;padding-top: 10px"
+                          onclick="change_glyph.call(this)"></span>
 
                     <span style="padding-left: 90px">
 
@@ -100,7 +99,8 @@
 
                         for (var k = 0;k < stringArray.length - 1;k++){ %>
 
-                        <button type="submit" class="btn btn-info" value= '<%=stringArray[k]%>' onclick="postByTags.call(this)"><%= stringArray[k] %></button>
+                        <button type="submit" class="btn btn-info" value='<%= stringArray[k] %>'
+                                onclick="postByTags.call(this)"><%= stringArray[k] %></button>
 
                         <% } %>
                     </span>

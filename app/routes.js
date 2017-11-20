@@ -11,6 +11,7 @@
 https://evdokimovm.github.io/javascript/nodejs/mongodb/pagination/expressjs/ejs/bootstrap/2017/08/20/create-pagination-with-nodejs-mongodb-express-and-ejs-step-by-step-from-scratch.html
  */
 var SOPostModel = require('../app/models/post');
+var UserProfileModel = require('../app/models/user_profile');
 var nodeSuggestiveSearch = nss = require('../search/search.js').init(undefined);
 const fs = require('fs');
 var searchElements = [];
@@ -30,24 +31,14 @@ module.exports = function (application_root, passport_auth) {
         response.render('login.ejs', {message: request.flash('login-message')});
     });
 
-    application_root.get('/tag_search', function (request, response) {
-        if (tags === undefined || tags.length === 0) {
-            var rawData = fs.readFileSync('../Recommender-System/search/tag_search/tags.json');
-            tagsInJSONFormat = JSON.parse(rawData);
-            for (var index = 0; index < tagsInJSONFormat.length; index++) {
-                tags.push(tagsInJSONFormat[index].tag);
-            }
-        }
-        response.render('sign-up.ejs', {
-            available_tags: JSON.stringify(tags),
-            message: request.flash('sign-up-message')
-        });
-    });
-
     application_root.get('/search/:keyword', function (request, response, next) {
         var keyword = request.params.keyword || 'java';
         var item_length;
         var searched_post = [];
+
+        if (request.isAuthenticated())
+            response.redirect('/personalized_search/' + keyword);
+
         nodeSuggestiveSearch.loadJson('../Recommender-System/search/post_title.json')
             .then(() => {
                 nodeSuggestiveSearch.query(keyword).then((data) => {
@@ -85,10 +76,28 @@ module.exports = function (application_root, passport_auth) {
             });
     });
 
-    application_root.get('/personalized_search/:keyword', isUserLoggedIn, function (request, response, next) {
-        var keyword = request.params.keyword || 'java';
+    application_root.get('/personalized_search/:keyword', function (request, response, next) {
+        let searched_keyword = request.params.keyword;
+
+        let default_search_keyword = 'java';
+        var keyword = searched_keyword || default_search_keyword;
         var item_length;
         var searched_post = [];
+
+        if (!request.isAuthenticated())
+            response.redirect('/search/' + keyword);
+
+        if (searched_keyword !== undefined && searched_keyword.length > 0)
+            UserProfileModel
+                .update({"local.username": request.user.local.username},
+                    {
+                        "$addToSet": {"local.temporary_user_tags": searched_keyword}
+                    })
+                .exec(function (error) {
+                    if (error)
+                        throw error;
+                });
+
         nodeSuggestiveSearch.loadJson('../Recommender-System/search/post_title.json')
             .then(() => {
                 nodeSuggestiveSearch.query(keyword).then((data) => {
@@ -126,9 +135,13 @@ module.exports = function (application_root, passport_auth) {
             });
     });
 
-    application_root.get('/personalized_search_results/:page', isUserLoggedIn, function (request, response) {
+    application_root.get('/personalized_search_results/:page', function (request, response) {
         var page = parseInt(request.params.page || 1);
         var perPage = 10;
+
+        if (!request.isAuthenticated())
+            response.redirect('/search_results/' + page);
+
         var currentPageContent = paginate(searchResults, page, perPage);
         response.render('personalized_search_results.ejs', {
             posts: currentPageContent.pageData,
@@ -139,6 +152,8 @@ module.exports = function (application_root, passport_auth) {
 
     application_root.get('/search_results/:page', function (request, response) {
         var page = parseInt(request.params.page || 1);
+        if (request.isAuthenticated())
+            response.redirect('/personalized_search_results/' + page);
         var perPage = 10;
         var currentPageContent = paginate(searchResults, page, perPage);
         response.render('search_results.ejs', {
@@ -148,36 +163,55 @@ module.exports = function (application_root, passport_auth) {
         })
     });
 
-    application_root.get('/personalized_post/:page', isUserLoggedIn, function (request, response, next) {
+    application_root.get('/personalized_post/:page', function (request, response, next) {
         var perPage = 10;
         var page = request.params.page || 1;
 
-        SOPostModel
-            .find({"type": "\"question"})
-            .skip((perPage * page) - perPage)
-            .limit(perPage)
-            .exec(function (error, stack_overflow_post) {
-                SOPostModel
-                    .find({"type": "\"question"})
-                    .count()
-                    .exec(function (error, count) {
-                        if (error)
-                            response.render('error.ejs', {
-                                posts: [],
-                            });
-                        response.render('personalized_post.ejs', {
-                            posts: stack_overflow_post,
-                            current: page,
-                            pages: Math.ceil(count / perPage)
-                        })
-                    })
-            })
-    });
+        if (!request.isAuthenticated())
+            response.redirect('/post/' + page);
 
+        UserProfileModel
+            .find({"local.username": request.user.local.username})
+            .exec(function (error, user_info) {
+                SOPostModel
+                    .find({
+                        $and: [
+                            {"type": "\"question"},
+                            {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, " ")}},
+                        ]
+                    })
+                    .skip((perPage * page) - perPage)
+                    .limit(perPage)
+                    .exec(function (error, stack_overflow_post) {
+                        SOPostModel
+                            .find({
+                                $and: [
+                                    {"type": "\"question"},
+                                    {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, " ")}},
+                                ]
+                            })
+                            .count()
+                            .exec(function (error, count) {
+                                if (error)
+                                    response.render('error.ejs', {
+                                        posts: [],
+                                    });
+                                response.render('personalized_post.ejs', {
+                                    posts: stack_overflow_post,
+                                    current: page,
+                                    pages: Math.ceil(count / perPage)
+                                })
+                            })
+                    })
+            });
+    });
 
     application_root.get('/post/:page', function (request, response, next) {
         var perPage = 10;
         var page = request.params.page || 1;
+
+        if (request.isAuthenticated())
+            response.redirect('/personalized_post/' + page);
 
         SOPostModel
             .find({"type": "\"question"})
@@ -202,8 +236,12 @@ module.exports = function (application_root, passport_auth) {
     });
 
 
-    application_root.get('/fetch_personalized_post/:title', isUserLoggedIn, function (request, response, next) {
+    application_root.get('/fetch_personalized_post/:title', function (request, response, next) {
         var title = request.params.title;
+
+        if (!request.isAuthenticated())
+            response.redirect('/fetch_post/' + title);
+
         if (title === undefined)
             response.render('answers.ejs', {
                 posts: [],
@@ -235,6 +273,10 @@ module.exports = function (application_root, passport_auth) {
 
     application_root.get('/fetch_post/:title', function (request, response, next) {
         var title = request.params.title;
+
+        if (request.isAuthenticated())
+            response.redirect('/fetch_personalized_post/' + title);
+
         if (title === undefined)
             response.render('answers.ejs', {
                 posts: [],
@@ -270,7 +312,17 @@ module.exports = function (application_root, passport_auth) {
     }));
 
     application_root.get('/sign-up', function (request, response) {
-        response.redirect('/tag_search');
+        if (tags === undefined || tags.length === 0) {
+            var rawData = fs.readFileSync('../Recommender-System/search/tag_search/tags.json');
+            tagsInJSONFormat = JSON.parse(rawData);
+            for (var index = 0; index < tagsInJSONFormat.length; index++) {
+                tags.push(tagsInJSONFormat[index].tag);
+            }
+        }
+        response.render('sign-up.ejs', {
+            available_tags: JSON.stringify(tags),
+            message: request.flash('sign-up-message')
+        });
     });
 
     application_root.post('/sign-up', passport_auth.authenticate('local-sign-up', {
@@ -286,10 +338,12 @@ module.exports = function (application_root, passport_auth) {
     });
 
     application_root.get('/logout', function (request, response) {
+        searchResults = [];
         request.logout();
         response.redirect('/');
     });
-};
+}
+;
 
 function isUserLoggedIn(request, response, next) {
     if (request.isAuthenticated())

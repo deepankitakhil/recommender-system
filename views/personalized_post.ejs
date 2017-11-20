@@ -24,10 +24,11 @@
                 function callSearch() {
                     location.href = "/personalized_search/" + document.getElementById('srch-term').value;
                 }
+
                 function postByTags() {
 
                     var fired_button = $(this).val();
-                    location.href = "/search/" + fired_button;
+                    location.href = "/personalized_search/" + fired_button;
                 }
             </script>
         </div>
@@ -43,6 +44,7 @@
                 $("#searchButton").click();
             }
         });
+
         function change_glyph() {
             $(this).toggleClass('glyphicon-star-empty').toggleClass('glyphicon-star');
             //alert($(this).attr('id'));
@@ -61,8 +63,10 @@
             <tr>
                 <td class="posts" colspan="50">
 
-                    <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true" style="color: #5e5e5e"></span> <%=posts[i].vote%>
-                    <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true" style="color: #5e5e5e;padding-left: 8px"></span> 0
+                    <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"
+                          style="color: #5e5e5e"></span> <%= posts[i].vote %>
+                    <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"
+                          style="color: #5e5e5e;padding-left: 8px"></span> 0
 
                     <a href="" style="padding-left: 50px" class="clicked_post">
 
@@ -73,7 +77,9 @@
             <tr>
                 <td colspan="50">
 
-                    <span id="<%=posts[i].title%>" class="glyphicon glyphicon-star-empty" aria-hidden="true" style="color: #5e5e5e;font-size: 26px;padding-left: 26px;padding-top: 10px" onclick="change_glyph.call(this)"></span>
+                    <span id="<%= posts[i].title %>" class="glyphicon glyphicon-star-empty" aria-hidden="true"
+                          style="color: #5e5e5e;font-size: 26px;padding-left: 26px;padding-top: 10px"
+                          onclick="change_glyph.call(this)"></span>
 
                     <span style="padding-left: 90px">
 
@@ -88,7 +94,8 @@
 
                         for (var k = 0;k < stringArray.length - 1;k++){ %>
 
-                        <button type="submit" class="btn btn-info" value= '<%=stringArray[k]%>' onclick="postByTags.call(this)"><%= stringArray[k] %></button>
+                        <button type="submit" class="btn btn-info" value='<%= stringArray[k] %>'
+                                onclick="postByTags.call(this)"><%= stringArray[k] %></button>
 
                         <% } %>
                     </span>
