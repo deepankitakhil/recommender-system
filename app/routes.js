@@ -11,6 +11,7 @@
 https://evdokimovm.github.io/javascript/nodejs/mongodb/pagination/expressjs/ejs/bootstrap/2017/08/20/create-pagination-with-nodejs-mongodb-express-and-ejs-step-by-step-from-scratch.html
  */
 var SOPostModel = require('../app/models/post');
+var UserProfileModel = require('../app/models/user_profile');
 var nodeSuggestiveSearch = nss = require('../search/search.js').init(undefined);
 const fs = require('fs');
 var searchElements = [];
@@ -76,12 +77,26 @@ module.exports = function (application_root, passport_auth) {
     });
 
     application_root.get('/personalized_search/:keyword', function (request, response, next) {
-        var keyword = request.params.keyword || 'java';
+        let searched_keyword = request.params.keyword;
+
+        let default_search_keyword = 'java';
+        var keyword = searched_keyword || default_search_keyword;
         var item_length;
         var searched_post = [];
 
         if (!request.isAuthenticated())
             response.redirect('/search/' + keyword);
+
+        if (searched_keyword !== undefined && searched_keyword.length > 0)
+            UserProfileModel
+                .update({"local.username": request.user.local.username},
+                    {
+                        "$addToSet": {"local.temporary_user_tags": searched_keyword}
+                    })
+                .exec(function (error) {
+                    if (error)
+                        throw error;
+                });
 
         nodeSuggestiveSearch.loadJson('../Recommender-System/search/post_title.json')
             .then(() => {
@@ -155,28 +170,41 @@ module.exports = function (application_root, passport_auth) {
         if (!request.isAuthenticated())
             response.redirect('/post/' + page);
 
-        SOPostModel
-            .find({"type": "\"question"})
-            .skip((perPage * page) - perPage)
-            .limit(perPage)
-            .exec(function (error, stack_overflow_post) {
+        UserProfileModel
+            .find({"local.username": request.user.local.username})
+            .exec(function (error, user_info) {
                 SOPostModel
-                    .find({"type": "\"question"})
-                    .count()
-                    .exec(function (error, count) {
-                        if (error)
-                            response.render('error.ejs', {
-                                posts: [],
-                            });
-                        response.render('personalized_post.ejs', {
-                            posts: stack_overflow_post,
-                            current: page,
-                            pages: Math.ceil(count / perPage)
-                        })
+                    .find({
+                        $and: [
+                            {"type": "\"question"},
+                            {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, " ")}},
+                        ]
                     })
-            })
+                    .skip((perPage * page) - perPage)
+                    .limit(perPage)
+                    .exec(function (error, stack_overflow_post) {
+                        SOPostModel
+                            .find({
+                                $and: [
+                                    {"type": "\"question"},
+                                    {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, " ")}},
+                                ]
+                            })
+                            .count()
+                            .exec(function (error, count) {
+                                if (error)
+                                    response.render('error.ejs', {
+                                        posts: [],
+                                    });
+                                response.render('personalized_post.ejs', {
+                                    posts: stack_overflow_post,
+                                    current: page,
+                                    pages: Math.ceil(count / perPage)
+                                })
+                            })
+                    })
+            });
     });
-
 
     application_root.get('/post/:page', function (request, response, next) {
         var perPage = 10;

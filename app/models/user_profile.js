@@ -17,10 +17,10 @@ var userProfileSchema = mongoose_lib.Schema({
     local: {
         username: String,
         bio: String,
-        user_tags: {type: Array, "default": []},
-        following: {type: Array, "default": []},
-        followers: {type: Array, "default": []},
-        temporary_user_tags: {type: Array, "default": []}
+        user_tags: [String],
+        following: [String],
+        followers: [String],
+        temporary_user_tags: [String]
     }
 
 });
