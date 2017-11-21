@@ -15,9 +15,13 @@
 
     <section class="container text-right">
         <div class="btn-toolbar">
-
+            <button type="button" class="btn btn-primary" onclick="goToHome()">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</button>
             <button type="button" class="btn btn-primary" onclick="goToLogOut()">LogOut</button>
             <script>
+                function goToHome() {
+                    location.href = "/personalized_post/1";
+                }
                 function goToLogOut() {
                     location.href = "/logout";
                 }

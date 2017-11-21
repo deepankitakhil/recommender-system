@@ -54,8 +54,30 @@ td.last_td{
 }
 
 table.post_table{
+
     margin-bottom: 40px;
-    background-color: #ebcccc;
-    width: 70%;
-    background-color: transparent
+    background-color: transparent;
+    width: 100%;
+
+}
+tr.spaceUnder>td {
+    padding-bottom: 0em;
+}
+.section1{
+    margin-top: 30px;
+    width:75%;
+    float:left;
+    height:100%;
+}
+
+.section2{
+    margin-top: 150px;
+    width:20%;
+    float:right;
+    height:100%;
+}
+.container_fluid{
+    width: 1200px;
+    margin-right: auto;
+    margin-left: auto
 }
