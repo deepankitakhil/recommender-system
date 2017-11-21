@@ -89,7 +89,7 @@ module.exports = function (application_root, passport_auth) {
             .find({
                 $and: [
                     {"type": "\"question"},
-                    {"tag": {$regex: searched_keyword.toString().replace(/[,]/g, "|")}},
+                    {"tag": {$regex: keyword.toString().replace(/[,]/g, "|")}},
                 ]
             })
             .exec(function (error, stack_overflow_post) {

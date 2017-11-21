@@ -49,14 +49,21 @@
 
         function change_glyph() {
             var url_id=$(this).attr('id');
-            var stringInput = url_id.replace("\"", "").replace("\\", "")
-            stringInput = stringInput.substr(0, stringInput.length - 2)
-            alert(stringInput);
+            var stringInput = url_id.replace("\"", "").replace("\\", "");
+            stringInput = stringInput.substr(0, stringInput.length - 2);
             $(this).toggleClass('glyphicon-star-empty').toggleClass('glyphicon-star');
-            $.ajax({
-                type: "POST",
-                url: "/add_to_favorite/"+stringInput
-            })
+            if($(this).attr('class')==='glyphicon glyphicon-star-empty') {
+                $.ajax({
+                    type: "GET",
+                    url: "/remove_from_favorite/" + stringInput
+                })
+            }
+            else if ($(this).attr('class')==='glyphicon glyphicon-star'){
+                $.ajax({
+                    type: "GET",
+                    url: "/add_to_favorite/" + stringInput
+                })
+            }
 
         }
 
