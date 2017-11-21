@@ -18,6 +18,8 @@ var searchElements = [];
 var tags = [];
 var tagsInJSONFormat = [];
 var searchResults = [];
+var content_based_recommendation_posts = [];
+var collaborative_based_recommendation_posts = [];
 module.exports = function (application_root, passport_auth) {
 
     application_root.get('/', function (request, response) {
@@ -173,11 +175,14 @@ module.exports = function (application_root, passport_auth) {
         UserProfileModel
             .find({"local.username": request.user.local.username})
             .exec(function (error, user_info) {
+                if (error)
+                    throw error;
+
                 SOPostModel
                     .find({
                         $and: [
                             {"type": "\"question"},
-                            {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, " ")}},
+                            {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, "|")}},
                         ]
                     })
                     .skip((perPage * page) - perPage)
@@ -187,7 +192,7 @@ module.exports = function (application_root, passport_auth) {
                             .find({
                                 $and: [
                                     {"type": "\"question"},
-                                    {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, " ")}},
+                                    {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, "|")}},
                                 ]
                             })
                             .count()
@@ -198,6 +203,8 @@ module.exports = function (application_root, passport_auth) {
                                     });
                                 response.render('personalized_post.ejs', {
                                     posts: stack_overflow_post,
+                                    content_based_recommendation_posts: content_based_recommendation_posts,
+                                    collaborative_based_recommendation_posts: collaborative_based_recommendation_posts,
                                     current: page,
                                     pages: Math.ceil(count / perPage)
                                 })
@@ -332,6 +339,8 @@ module.exports = function (application_root, passport_auth) {
     }));
 
     application_root.get('/profile', isUserLoggedIn, function (request, response) {
+        retrieveContentBasedRecommendationPost(request.user.local.username);
+        retrieveCollaborationBasedRecommendationPost(request.user.local.username);
         response.render('profile.ejs', {
             user: request.user,
         });
@@ -339,6 +348,8 @@ module.exports = function (application_root, passport_auth) {
 
     application_root.get('/logout', function (request, response) {
         searchResults = [];
+        content_based_recommendation_posts = [];
+        collaborative_based_recommendation_posts = [];
         request.logout();
         response.redirect('/');
     });
@@ -402,4 +413,59 @@ function paginate(searchList, page, perPage) {
         nextPage: page < lastPage ? page + 1 : null,
         totalCount: lastPage
     }
+}
+
+function retrieveContentBasedRecommendationPost(user_name) {
+    UserProfileModel
+        .find({"local.username": user_name})
+        .exec(function (error, user_info) {
+                SOPostModel
+                    .find({
+                        $and: [
+                            {"type": "\"question"},
+                            {"tag": {$regex: user_info[0].local.temporary_user_tags.toString().replace(/[,]/g, "|")}},
+                        ]
+                    })
+                    .sort({"vote": "desc"})
+                    .limit(10)
+                    .exec(function (error, content_based_stack_overflow_posts) {
+                        if (error)
+                            throw error;
+                        content_based_recommendation_posts = content_based_stack_overflow_posts;
+                    })
+            }
+        )
+}
+
+function retrieveCollaborationBasedRecommendationPost(user_name) {
+    UserProfileModel.find({'local.username': {$nin: [user_name]}}, function (error, all_users) {
+        if (error)
+            console.log(error);
+        else {
+            buildCollaborationBasedRecommendationPost(all_users);
+        }
+    }).select('-_id');
+}
+
+function buildCollaborationBasedRecommendationPost(users) {
+    var user_tags = [];
+    for (var index = 0; index < users.length; index++) {
+        for (var tag_index = 0; tag_index < users[index].local.user_tags.length; tag_index++)
+            user_tags.push(users[index].local.user_tags[tag_index]);
+    }
+
+    SOPostModel
+        .find({
+            $and: [
+                {"type": "\"question"},
+                {"tag": {$regex: user_tags.toString().replace(/[,]/g, "|")}},
+            ]
+        })
+        .sort({"vote": "desc"})
+        .limit(10)
+        .exec(function (error, collaboration_based_post) {
+            if (error)
+                throw error;
+            collaborative_based_recommendation_posts = collaboration_based_post;
+        })
 }
