@@ -8,6 +8,7 @@
  https://www.djamware.com/post/58eba06380aca72673af8500/node-express-mongoose-and-passportjs-rest-api-authentication
  http://jsfiddle.net/asimshahiddIT/jrjjzw18/
  https://github.com/ivanvaladares/Node-Suggestive-Search
+ https://stackoverflow.com/questions/42258116/dividing-a-page-into-two-vertical-and-indetical-sections-with-border
 https://evdokimovm.github.io/javascript/nodejs/mongodb/pagination/expressjs/ejs/bootstrap/2017/08/20/create-pagination-with-nodejs-mongodb-express-and-ejs-step-by-step-from-scratch.html
  */
 var SOPostModel = require('../app/models/post');
@@ -76,6 +77,66 @@ module.exports = function (application_root, passport_auth) {
                     }
                 )
             });
+    });
+
+    application_root.get('/tag_search/:keyword', function (request, response, next) {
+        var keyword = request.params.keyword || 'java';
+
+        if (request.isAuthenticated())
+            response.redirect('/personalized_tag_search/' + keyword);
+
+        SOPostModel
+            .find({
+                $and: [
+                    {"type": "\"question"},
+                    {"tag": {$regex: searched_keyword.toString().replace(/[,]/g, "|")}},
+                ]
+            })
+            .exec(function (error, stack_overflow_post) {
+                if (error)
+                    response.render('error.ejs', {
+                        posts: [],
+                    });
+                searchResults = stack_overflow_post;
+                response.redirect('search_results/1');
+            })
+    });
+
+    application_root.get('/personalized_tag_search/:keyword', function (request, response, next) {
+        let searched_keyword = request.params.keyword;
+
+        let default_search_keyword = 'java';
+        var keyword = searched_keyword || default_search_keyword;
+
+        if (!request.isAuthenticated())
+            response.redirect('/tag_search/' + keyword);
+
+        if (searched_keyword !== undefined && searched_keyword.length > 0)
+            UserProfileModel
+                .update({"local.username": request.user.local.username},
+                    {
+                        "$addToSet": {"local.temporary_user_tags": searched_keyword}
+                    })
+                .exec(function (error) {
+                    if (error)
+                        throw error;
+                });
+
+        SOPostModel
+            .find({
+                $and: [
+                    {"type": "\"question"},
+                    {"tag": {$regex: searched_keyword.toString().replace(/[,]/g, "|")}},
+                ]
+            })
+            .exec(function (error, stack_overflow_post) {
+                if (error)
+                    response.render('error.ejs', {
+                        posts: [],
+                    });
+                searchResults = stack_overflow_post;
+                response.redirect('personalized_search_results/1');
+            })
     });
 
     application_root.get('/personalized_search/:keyword', function (request, response, next) {
@@ -163,6 +224,72 @@ module.exports = function (application_root, passport_auth) {
             current: currentPageContent.nextPage - 1,
             pages: currentPageContent.totalCount
         })
+    });
+
+    application_root.get('/add_to_favorite/:title', function (request) {
+        var title = request.params.title || '';
+        if (request.isAuthenticated()) {
+            if (title !== undefined && title.length > 0)
+                UserProfileModel
+                    .update({"local.username": request.user.local.username},
+                        {
+                            "$addToSet": {"local.favorites": title}
+                        })
+                    .exec(function (error) {
+                        if (error)
+                            throw error;
+                    });
+        }
+    });
+
+
+    application_root.get('/remove_from_favorite/:title', function (request) {
+        var title = request.params.title || '';
+        if (request.isAuthenticated()) {
+            if (title !== undefined && title.length > 0)
+                UserProfileModel
+                    .update({"local.username": request.user.local.username},
+                        {
+                            "$pull": {"local.favorites": title}
+                        })
+                    .exec(function (error) {
+                        if (error)
+                            throw error;
+                    });
+        }
+    });
+
+    application_root.get('/vote_up/:title', function (request) {
+        var title = request.params.title || '';
+        if (request.isAuthenticated()) {
+            if (title !== undefined && title.length > 0)
+                UserProfileModel
+                    .update({"local.username": request.user.local.username},
+                        {
+                            "$addToSet": {"local.voted_up": title}
+                        })
+                    .exec(function (error) {
+                        if (error)
+                            throw error;
+                    });
+        }
+    });
+
+
+    application_root.get('/vote_down/:title', function (request) {
+        var title = request.params.title || '';
+        if (request.isAuthenticated()) {
+            if (title !== undefined && title.length > 0)
+                UserProfileModel
+                    .update({"local.username": request.user.local.username},
+                        {
+                            "$pull": {"local.voted_down": title}
+                        })
+                    .exec(function (error) {
+                        if (error)
+                            throw error;
+                    });
+        }
     });
 
     application_root.get('/personalized_post/:page', function (request, response, next) {
