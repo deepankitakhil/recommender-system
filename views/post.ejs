@@ -52,6 +52,11 @@
                 $("#searchButton").click();
             }
         });
+        function postByTags() {
+
+            var fired_button = $(this).val();
+            location.href = "/tag_search/" + fired_button;
+        }
 
     </script>
 
@@ -64,7 +69,7 @@
         <table id="contentTable" class="table" >
             <tr>
             <td class="posts" colspan="50">
-                <a class="clicked_post" href="getClickedPost()">
+                <a class="clicked_post" href="">
                     <%= beautifyOutput(posts[i].title) %>
                 </a>
 
@@ -85,7 +90,7 @@
             for (var k=0;k<stringArray.length-1;k++){%>
 
 
-                    <button type="button" class="btn btn-info"><%=stringArray[k]%></button>
+                    <button type="button" class="btn btn-info" onclick="postByTags.call(this)"><%=stringArray[k]%></button>
 
 
 
