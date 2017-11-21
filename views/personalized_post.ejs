@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/main_profile.css">
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
@@ -11,12 +11,14 @@
 <body>
 
 
-<div class="container" style="margin-top: 30px">
+<div class="container_fluid" style="margin-top: 30px" >
     <section class="container text-right">
         <div class="btn-toolbar">
-
+            <button type="button" class="btn btn-warning" onclick="signUp()">
+                <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Dashboard</button>
             <button type="button" class="btn btn-primary" onclick="goToLogOut()">LogOut</button>
             <script>
+
                 function goToLogOut() {
                     location.href = "/logout";
                 }
@@ -46,14 +48,22 @@
         });
 
         function change_glyph() {
+            var url_id=$(this).attr('id');
+            var stringInput = url_id.replace("\"", "").replace("\\", "")
+            stringInput = stringInput.substr(0, stringInput.length - 2)
+            alert(stringInput);
             $(this).toggleClass('glyphicon-star-empty').toggleClass('glyphicon-star');
-            //alert($(this).attr('id'));
+            $.ajax({
+                type: "POST",
+                url: "/add_to_favorite/"+stringInput
+            })
 
         }
 
     </script>
 
-    <div style="margin-top: 30px">
+    <div class="section1">
+
         <% function beautifyOutput(input) {
             var stringInput = input.replace("\"", "").replace("\\", "")
             stringInput = stringInput.substr(0, stringInput.length - 2)
@@ -105,37 +115,74 @@
                 <td class="last_td" style="padding-top: 10px"></td>
             </tr>
         </table>
+
+
+        <% } %>
+
+        </table>
+        <% if (pages > 0) { %>
+        <ul class="pagination text-center" style="padding-left: 200px ">
+            <% if (current == 1) { %>
+            <li class="disabled"><a>First</a></li>
+            <% } else { %>
+            <li><a href="/personalized_post/1">First</a></li>
+            <% } %>
+            <% i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+            <% if (i !== 1) { %>
+            <li class="disabled"><a>...</a></li>
+            <% } %>
+            <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+            <% if (i == current) { %>
+            <li class="active"><a><%= i %></a></li>
+            <% } else { %>
+            <li><a href="/personalized_post/<%= i %>"><%= i %></a></li>
+            <% } %>
+            <% if (i == Number(current) + 4 && i < pages) { %>
+            <li class="disabled"><a>...</a></li>
+            <% } %>
+            <% } %>
+            <% if (current == pages) { %>
+            <li class="disabled"><a>Last</a></li>
+            <% } else { %>
+            <li><a href="/personalized_post/<%= pages %>">Last</a></li>
+            <% } %>
+        </ul>
         <% } %>
     </div>
+    <div class="section2">
+        <h5 style="font-size: 14px;text-indent:-2px;margin-left:10px"><u>Posts You May Like</u></h5>
+        <% for (var i=0;i<content_based_recommendation_posts.length;i++){%>
+        <table style="float: right;display: inline-block;">
+            <tr class="spaceUnder">
+                <p style="font-size: 13px;text-indent:-2px;margin-left:10px;color: red">
 
-    <% if (pages > 0) { %>
-    <ul class="pagination text-center">
-        <% if (current == 1) { %>
-        <li class="disabled"><a>First</a></li>
-        <% } else { %>
-        <li><a href="/personalized_post/1">First</a></li>
-        <% } %>
-        <% i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
-        <% if (i !== 1) { %>
-        <li class="disabled"><a>...</a></li>
-        <% } %>
-        <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
-        <% if (i == current) { %>
-        <li class="active"><a><%= i %></a></li>
-        <% } else { %>
-        <li><a href="/personalized_post/<%= i %>"><%= i %></a></li>
-        <% } %>
-        <% if (i == Number(current) + 4 && i < pages) { %>
-        <li class="disabled"><a>...</a></li>
-        <% } %>
-        <% } %>
-        <% if (current == pages) { %>
-        <li class="disabled"><a>Last</a></li>
-        <% } else { %>
-        <li><a href="/personalized_post/<%= pages %>">Last</a></li>
-        <% } %>
-    </ul>
-    <% } %>
+                    <a href="" class="clicked_post">
+
+                        <%= beautifyOutput(content_based_recommendation_posts[i].title) %>
+                    </a>
+
+                </p>
+            </tr>
+        <%}%>
+        </table>
+
+        <h5 style="font-size: 14px;text-indent:-2px;margin-left:10px;padding-top: 10px"><u>Posts Others have Liked</u></h5>
+        <% for (var i=0;i<collaborative_based_recommendation_posts.length;i++){%>
+        <table style="float: right;display: inline-block;">
+            <tr class="spaceUnder">
+                <p style="font-size: 13px;text-indent:-2px;margin-left:10px">
+                    <a href="" class="clicked_post">
+
+                        <%= beautifyOutput(collaborative_based_recommendation_posts[i].title) %>
+                    </a>
+
+                </p>
+            </tr>
+            <%}%>
+        </table>
+    </div>
+
+
     <script>
 
 

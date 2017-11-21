@@ -16,45 +16,39 @@
         <div class="btn-toolbar">
 
             <button type="button" class="btn btn-primary" onclick="goToLogin()">Login</button>
-            <script>
-
-                function goToLogin() {
-                    location.href = "/login";
-                }
-
-                function callSearch() {
-                    location.href = "/search/" + document.getElementById('srch-term').value;
-                }
-                function postByTags() {
-
-                    var fired_button = $(this).val();
-                    location.href = "/search/" + fired_button;
-                }
-            </script>
-            <button type="button" class="btn btn-warning" onclick="signUp()">Sign Up</button>
-            <script>
-                function signUp() {
-                    location.href = "/sign-up";
-                }
-            </script>
+        <script>
+            function goToLogin()
+            {
+                location.href = "/login";
+            }
+            function callSearch()
+            {
+                location.href = "/search/"+document.getElementById('srch-term').value;
+            }
+        </script>
+        <button type="button" class="btn btn-warning" onclick="signUp()">Sign Up</button>
+        <script>
+            function signUp()
+            {
+                location.href = "/sign-up";
+            }
+        </script>
         </div>
         <script>
-            function change_glyph() {
-                $(this).toggleClass('glyphicon-star-empty').toggleClass('glyphicon-star');
-                //alert($(this).attr('id'));
-
+            function showPost()
+            {
+                location.href = "/sign-up";
             }
         </script>
 
     </section>
 
 
-    <input class="form-control-custom" placeholder="Search" name="srch-term" id="srch-term" type="text">
-    <button class="btn btn-default" type="submit" onclick="callSearch()" id="searchButton" style="visibility: hidden"><i
-                class="glyphicon glyphicon-search"></i></button>
+            <input class="form-control-custom" placeholder="Search" name="srch-term" id="srch-term" type="text">
+            <button class="btn btn-default" type="submit" onclick="callSearch()" id="searchButton" style="visibility: hidden"><i class="glyphicon glyphicon-search"></i></button>
     <script>
-        $("#srch-term").keyup(function (event) {
-            if (event.keyCode === 13) {
+        $("#srch-term").keyup(function(event) {
+            if (event.keyCode == 13) {
                 $("#searchButton").click();
             }
         });
@@ -67,46 +61,37 @@
             stringInput = stringInput.substr(0, stringInput.length - 2)
             return stringInput;
         } for (var i = 0; i < posts.length; i++) { %>
-        <table id="contentTable" class="post_table">
+        <table id="contentTable" class="table" >
             <tr>
-                <td class="posts" colspan="50">
+            <td class="posts" colspan="50">
+                <a class="clicked_post" href="getClickedPost()">
+                    <%= beautifyOutput(posts[i].title) %>
+                </a>
 
-                        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true" style="color: #5e5e5e"></span> <%=posts[i].vote%>
-                        <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true" style="color: #5e5e5e;padding-left: 8px"></span> 0
-
-                    <a href="" style="padding-left: 50px" class="clicked_post">
-
-                        <%= beautifyOutput(posts[i].title) %>
-                    </a>
-                </td>
+            </td>
             </tr>
             <tr>
-                <td colspan="50">
+            <td align="left">
 
-                    <span id="<%=posts[i].title%>" class="glyphicon glyphicon-star-empty" aria-hidden="true" style="color: #5e5e5e;font-size: 26px;padding-left: 26px;padding-top: 10px" onclick="change_glyph.call(this)"></span>
+            <% var string = posts[i].tag;
+                var res = string.split(" ");
+                var stringArray = new Array();
+            for(var j =0; j < res.length; j++){
+                if(res[j]!='java') {
+                    stringArray.push(res[j]);
+                }
+                }
 
-                    <span style="padding-left: 90px">
+            for (var k=0;k<stringArray.length-1;k++){%>
 
-                    <% var string = posts[i].tag;
-                        var res = string.split(" ");
-                        var stringArray = [];
-                        for (var j = 0; j < res.length; j++) {
-                            if (res[j] != 'java') {
-                                stringArray.push(res[j]);
-                            }
-                        }
 
-                    for (var k = 0;k < stringArray.length - 1;k++){ %>
+                    <button type="button" class="btn btn-info"><%=stringArray[k]%></button>
 
-                    <button type="submit" class="btn btn-info" value= '<%=stringArray[k]%>' onclick="postByTags.call(this)"><%= stringArray[k] %></button>
 
-                    <% } %>
-                    </span>
-                </td>
+
+            <% } %>
+            </td>
             </tr>
-<tr>
-    <td class="last_td" style="padding-top: 10px"></td>
-</tr>
         </table>
         <% } %>
     </div>
@@ -144,11 +129,13 @@
 
         function escapeHtml(input) {
             var map = {
-                '&': '&amp;',
+
+                '<': '&lt;',
+                '>': '&gt;',
                 "/": '_'
             };
 
-            return input.replace(/[&/]/g, function (key) {
+            return input.replace(/[<>/]/g, function (key) {
                 return map[key];
             });
         }
