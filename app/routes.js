@@ -262,7 +262,7 @@ module.exports = function (application_root, passport_auth) {
     application_root.get('/vote_up/:title', function (request) {
         var title = request.params.title || '';
         if (request.isAuthenticated()) {
-            if (title !== undefined && title.length > 0)
+            if (title !== undefined && title.length > 0) {
                 UserProfileModel
                     .update({"local.username": request.user.local.username},
                         {
@@ -272,6 +272,17 @@ module.exports = function (application_root, passport_auth) {
                         if (error)
                             throw error;
                     });
+
+                SOPostModel
+                    .update({"title": title},
+                        {
+                            $inc: {vote: 1}
+                        })
+                    .exec(function (error) {
+                        if (error)
+                            throw error;
+                    });
+            }
         }
     });
 
@@ -289,6 +300,16 @@ module.exports = function (application_root, passport_auth) {
                         if (error)
                             throw error;
                     });
+
+            SOPostModel
+                .update({"title": title},
+                    {
+                        $inc: {vote: -1}
+                    })
+                .exec(function (error) {
+                    if (error)
+                        throw error;
+                });
         }
     });
 
