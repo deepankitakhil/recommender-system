@@ -266,7 +266,7 @@ module.exports = function (application_root, passport_auth) {
                 UserProfileModel
                     .update({"local.username": request.user.local.username},
                         {
-                            "$addToSet": {"local.voted_up": title}
+                            "$addToSet": {"local.voted": title}
                         })
                     .exec(function (error) {
                         if (error)
@@ -283,7 +283,7 @@ module.exports = function (application_root, passport_auth) {
                 UserProfileModel
                     .update({"local.username": request.user.local.username},
                         {
-                            "$pull": {"local.voted_down": title}
+                            "$pull": {"local.voted": title}
                         })
                     .exec(function (error) {
                         if (error)
