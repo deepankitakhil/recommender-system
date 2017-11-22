@@ -66,6 +66,24 @@
             }
 
         }
+        function changeVotes() {
+            var url_id=$(this).attr('id');
+            var stringInput = url_id.replace("\"", "").replace("\\", "");
+            stringInput = stringInput.substr(0, stringInput.length - 2);
+            if(stringInput.startsWith('Voted up :')){
+                $.ajax({
+                    type: "GET",
+                    url: "/vote_up/" + stringInput.substr(10)
+
+                })
+            }
+            else{
+                $.ajax({
+                    type: "GET",
+                    url: "/vote_down/" + stringInput.substr(12)
+                })
+            }
+        }
 
     </script>
 
@@ -81,11 +99,11 @@
                 <td class="posts" colspan="50">
 
                     <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"
-                          style="color: #5e5e5e"></span> <%= posts[i].vote %>
+                          style="color: #5e5e5e;padding-left: 10px" onclick="changeVotes.call(this)" id="Voted up :<%= posts[i].title %>"></span> <%= posts[i].vote %>
                     <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"
-                          style="color: #5e5e5e;padding-left: 8px"></span> 0
+                          style="color: #5e5e5e;padding-left: 2px" onclick="changeVotes.call(this)" id="Voted down :<%= posts[i].title %>"></span>
 
-                    <a href="" style="padding-left: 50px" class="clicked_post">
+                    <a href="" style="padding-left: 70px" class="clicked_post">
 
                         <%= beautifyOutput(posts[i].title) %>
                     </a>
