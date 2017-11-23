@@ -14,11 +14,16 @@
 <div class="container_fluid" style="margin-top: 30px" >
     <section class="container text-right">
         <div class="btn-toolbar">
-            <button type="button" class="btn btn-warning" onclick="signUp()">
+            <button type="button" class="btn btn-warning" onclick="gotoDashboard()">
                 <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Dashboard</button>
             <button type="button" class="btn btn-primary" onclick="goToLogOut()">LogOut</button>
             <script>
-
+                
+                
+                function gotoDashboard() {
+                    location.href="/dashboard";
+                }
+                
                 function goToLogOut() {
                     location.href = "/logout";
                 }
@@ -83,6 +88,10 @@
                     url: "/vote_down/" + stringInput.substr(12)
                 })
             }
+            window.setTimeout(function () {
+                location.reload(true);
+            },500);
+
         }
 
     </script>
