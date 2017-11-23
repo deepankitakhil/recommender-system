@@ -34,6 +34,27 @@ module.exports = function (application_root, passport_auth) {
         response.render('login.ejs', {message: request.flash('login-message')});
     });
 
+    application_root.get('/dashboard', function (request, response, next) {
+        if (!request.isAuthenticated())
+            response.redirect('/post/1');
+
+        UserProfileModel
+            .find({"local.username": request.user.local.username})
+            .exec(function (error, user_info) {
+                if (error)
+                    response.render('error.ejs', {
+                        posts: [],
+                    });
+                response.render('dashboard.ejs', {
+                    bio: user_info[0].bio,
+                    temporary_user_tags: user_info[0].temporary_user_tags,
+                    voted: user_info[0].voted,
+                    favorites: user_info[0].favorites,
+                    user_tags: user_info[0].user_tags
+                })
+            })
+    });
+
     application_root.get('/search/:keyword', function (request, response, next) {
         var keyword = request.params.keyword || 'java';
         var item_length;
