@@ -273,15 +273,29 @@ module.exports = function (application_root, passport_auth) {
                             throw error;
                     });
 
+                title = buildRegex(title);
                 SOPostModel
-                    .update({"title": title},
-                        {
-                            $inc: {vote: 1}
-                        })
-                    .exec(function (error) {
+                    .find({
+                        $and: [
+                            {"type": "\"question"},
+                            {"title": {'$regex': title}}
+                        ]
+                    })
+                    .exec(function (error, so_post) {
                         if (error)
                             throw error;
-                    });
+                        else {
+                            SOPostModel
+                                .update({"title": {'$regex': title}},
+                                    {
+                                        "$set": {"vote": so_post[0].vote + 1}
+                                    })
+                                .exec(function (error) {
+                                    if (error)
+                                        throw error;
+                                });
+                        }
+                    })
             }
         }
     });
@@ -301,15 +315,30 @@ module.exports = function (application_root, passport_auth) {
                             throw error;
                     });
 
+            title = buildRegex(title);
+
             SOPostModel
-                .update({"title": title},
-                    {
-                        $inc: {vote: -1}
-                    })
-                .exec(function (error) {
+                .find({
+                    $and: [
+                        {"type": "\"question"},
+                        {"title": {'$regex': title}}
+                    ]
+                })
+                .exec(function (error, so_post) {
                     if (error)
                         throw error;
-                });
+                    else {
+                        SOPostModel
+                            .update({"title": {'$regex': title}},
+                                {
+                                    "$set": {"vote": so_post[0].vote - 1}
+                                })
+                            .exec(function (error) {
+                                if (error)
+                                    throw error;
+                            });
+                    }
+                })
         }
     });
 

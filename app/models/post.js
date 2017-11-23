@@ -8,7 +8,7 @@ var soPostSchema = mongoose_lib.Schema({
     tag: String,
     content: String,
     accept_rate: String,
-    vote: String,
+    vote: Number,
     title: String,
     time: String,
     type: String,
