@@ -568,6 +568,7 @@ module.exports = function (application_root, passport_auth) {
                     .find({
                         $and: [
                             {"type": "\"question"},
+                            {"vote": {$gt: -1}},
                             {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, "|")}},
                         ]
                     })
@@ -578,6 +579,7 @@ module.exports = function (application_root, passport_auth) {
                             .find({
                                 $and: [
                                     {"type": "\"question"},
+                                    {"vote": {$gt: -1}},
                                     {"tag": {$regex: user_info[0].local.user_tags.toString().replace(/[,]/g, "|")}},
                                 ]
                             })
