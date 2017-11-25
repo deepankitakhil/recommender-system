@@ -21,6 +21,204 @@ var tagsInJSONFormat = [];
 var searchResults = [];
 var content_based_recommendation_posts = [];
 var collaborative_based_recommendation_posts = [];
+
+function update_temporary_user_tags(request, searched_keyword) {
+    UserProfileModel
+        .find(
+            {
+                $and: [
+                    {"local.username": request.user.local.username},
+                    {"local.temporary_user_tags": {$elemMatch: {tags: searched_keyword}}},
+                ]
+            }
+        )
+        .exec(function (error, user_info) {
+            if (error)
+                throw error;
+            else {
+                var tags_clicked = [];
+                var new_entry = {};
+                if (user_info.length !== 0) {
+                    tags_clicked = user_info[0].local.temporary_user_tags;
+                    for (var index = 0; index < tags_clicked.length; index++) {
+                        if (tags_clicked[index].tags === searched_keyword) {
+                            new_entry = {tags: searched_keyword, count: tags_clicked[index].count + 1};
+                            UserProfileModel
+                                .update({"local.username": request.user.local.username},
+                                    {
+                                        "$pull": {"local.temporary_user_tags": {tags: searched_keyword}},
+                                    })
+                                .exec(function (error) {
+                                    if (error)
+                                        throw error;
+                                });
+                            break;
+                        }
+                    }
+                } else
+                    new_entry = {tags: searched_keyword, count: 1};
+
+                UserProfileModel
+                    .update({"local.username": request.user.local.username},
+                        {
+                            "$push": {"local.temporary_user_tags": new_entry},
+                        })
+                    .exec(function (error) {
+                        if (error)
+                            throw error;
+                    });
+            }
+        });
+}
+
+function update_search_tags(request, searched_keyword) {
+    UserProfileModel
+        .find(
+            {
+                $and: [
+                    {"local.username": request.user.local.username},
+                    {"local.search": {$elemMatch: {tags: searched_keyword}}},
+                ]
+            }
+        )
+        .exec(function (error, user_info) {
+            if (error)
+                throw error;
+            else {
+                var tags_clicked = [];
+                var new_entry = {};
+                if (user_info.length !== 0) {
+                    tags_clicked = user_info[0].local.search;
+                    for (var index = 0; index < tags_clicked.length; index++) {
+                        if (tags_clicked[index].tags === searched_keyword) {
+                            new_entry = {tags: searched_keyword, count: tags_clicked[index].count + 1};
+                            UserProfileModel
+                                .update({"local.username": request.user.local.username},
+                                    {
+                                        "$pull": {"local.search": {tags: searched_keyword}},
+                                    })
+                                .exec(function (error) {
+                                    if (error)
+                                        throw error;
+                                });
+                            break;
+                        }
+                    }
+                } else
+                    new_entry = {tags: searched_keyword, count: 1};
+
+                UserProfileModel
+                    .update({"local.username": request.user.local.username},
+                        {
+                            "$push": {"local.search": new_entry},
+                        })
+                    .exec(function (error) {
+                        if (error)
+                            throw error;
+                    });
+            }
+        });
+}
+
+function update_voted_up(request, searched_keyword) {
+    UserProfileModel
+        .find(
+            {
+                $and: [
+                    {"local.username": request.user.local.username},
+                    {"local.up_voted": {$elemMatch: {tags: searched_keyword}}},
+                ]
+            }
+        )
+        .exec(function (error, user_info) {
+            if (error)
+                throw error;
+            else {
+                var tags_clicked = [];
+                var new_entry = {};
+                if (user_info.length !== 0) {
+                    tags_clicked = user_info[0].local.up_voted;
+                    for (var index = 0; index < tags_clicked.length; index++) {
+                        if (tags_clicked[index].tags === searched_keyword) {
+                            new_entry = {tags: searched_keyword, count: tags_clicked[index].count + 1};
+                            UserProfileModel
+                                .update({"local.username": request.user.local.username},
+                                    {
+                                        "$pull": {"local.up_voted": {tags: searched_keyword}},
+                                    })
+                                .exec(function (error) {
+                                    if (error)
+                                        throw error;
+                                });
+                            break;
+                        }
+                    }
+                } else
+                    new_entry = {tags: searched_keyword, count: 1};
+
+                UserProfileModel
+                    .update({"local.username": request.user.local.username},
+                        {
+                            "$push": {"local.up_voted": new_entry},
+                        })
+                    .exec(function (error) {
+                        if (error)
+                            throw error;
+                    });
+            }
+        });
+}
+
+function update_voted_down(request, searched_keyword) {
+    UserProfileModel
+        .find(
+            {
+                $and: [
+                    {"local.username": request.user.local.username},
+                    {"local.down_voted": {$elemMatch: {tags: searched_keyword}}},
+                ]
+            }
+        )
+        .exec(function (error, user_info) {
+            if (error)
+                throw error;
+            else {
+                var tags_clicked = [];
+                var new_entry = {};
+                if (user_info.length !== 0) {
+                    tags_clicked = user_info[0].local.down_voted;
+                    for (var index = 0; index < tags_clicked.length; index++) {
+                        if (tags_clicked[index].tags === searched_keyword) {
+                            new_entry = {tags: searched_keyword, count: tags_clicked[index].count + 1};
+                            UserProfileModel
+                                .update({"local.username": request.user.local.username},
+                                    {
+                                        "$pull": {"local.down_voted": {tags: searched_keyword}},
+                                    })
+                                .exec(function (error) {
+                                    if (error)
+                                        throw error;
+                                });
+                            break;
+                        }
+                    }
+                } else
+                    new_entry = {tags: searched_keyword, count: 1};
+
+                UserProfileModel
+                    .update({"local.username": request.user.local.username},
+                        {
+                            "$push": {"local.down_voted": new_entry},
+                        })
+                    .exec(function (error) {
+                        if (error)
+                            throw error;
+                    });
+            }
+        });
+}
+
+
 module.exports = function (application_root, passport_auth) {
 
     application_root.get('/', function (request, response) {
@@ -46,11 +244,13 @@ module.exports = function (application_root, passport_auth) {
                         posts: [],
                     });
                 response.render('dashboard.ejs', {
-                    bio: user_info[0].bio,
-                    temporary_user_tags: user_info[0].temporary_user_tags,
-                    voted: user_info[0].voted,
-                    favorites: user_info[0].favorites,
-                    user_tags: user_info[0].user_tags
+                    user_bio: user_info[0].bio,
+                    user_temporary_user_tags: user_info[0].temporary_user_tags,
+                    user_search: user_info[0].search,
+                    user_favorites: user_info[0].favorites,
+                    user_up_voted: user_info[0].up_voted,
+                    user_down_voted: user_info[0].down_voted,
+                    user_user_tags: user_info[0].user_tags
                 })
             })
     });
@@ -133,15 +333,7 @@ module.exports = function (application_root, passport_auth) {
             response.redirect('/tag_search/' + keyword);
 
         if (searched_keyword !== undefined && searched_keyword.length > 0)
-            UserProfileModel
-                .update({"local.username": request.user.local.username},
-                    {
-                        "$addToSet": {"local.temporary_user_tags": searched_keyword}
-                    })
-                .exec(function (error) {
-                    if (error)
-                        throw error;
-                });
+            update_temporary_user_tags(request, searched_keyword);
 
         SOPostModel
             .find({
@@ -172,15 +364,7 @@ module.exports = function (application_root, passport_auth) {
             response.redirect('/search/' + keyword);
 
         if (searched_keyword !== undefined && searched_keyword.length > 0)
-            UserProfileModel
-                .update({"local.username": request.user.local.username},
-                    {
-                        "$addToSet": {"local.temporary_user_tags": searched_keyword}
-                    })
-                .exec(function (error) {
-                    if (error)
-                        throw error;
-                });
+            update_search_tags(request, searched_keyword);
 
         nodeSuggestiveSearch.loadJson('../Recommender-System/search/post_title.json')
             .then(() => {
@@ -284,16 +468,6 @@ module.exports = function (application_root, passport_auth) {
         var title = request.params.title || '';
         if (request.isAuthenticated()) {
             if (title !== undefined && title.length > 0) {
-                UserProfileModel
-                    .update({"local.username": request.user.local.username},
-                        {
-                            "$addToSet": {"local.voted": title}
-                        })
-                    .exec(function (error) {
-                        if (error)
-                            throw error;
-                    });
-
                 title = buildRegex(title);
                 SOPostModel
                     .find({
@@ -314,6 +488,13 @@ module.exports = function (application_root, passport_auth) {
                                 .exec(function (error) {
                                     if (error)
                                         throw error;
+                                    else {
+                                        var tags = so_post[0].tag.toString().split(" ");
+                                        for (var index = 0; index < tags.length - 1; index++) {
+                                            if (tags[index] !== "java" && tags[index].length > 0)
+                                                update_voted_up(request, tags[index]);
+                                        }
+                                    }
                                 });
                         }
                     })
@@ -326,17 +507,7 @@ module.exports = function (application_root, passport_auth) {
         var title = request.params.title || '';
         if (request.isAuthenticated()) {
             if (title !== undefined && title.length > 0)
-                UserProfileModel
-                    .update({"local.username": request.user.local.username},
-                        {
-                            "$pull": {"local.voted": title}
-                        })
-                    .exec(function (error) {
-                        if (error)
-                            throw error;
-                    });
-
-            title = buildRegex(title);
+                title = buildRegex(title);
 
             SOPostModel
                 .find({
@@ -357,6 +528,14 @@ module.exports = function (application_root, passport_auth) {
                             .exec(function (error) {
                                 if (error)
                                     throw error;
+
+                                else {
+                                    var tags = so_post[0].tag.toString().split(" ");
+                                    for (var index = 0; index < tags.length - 1; index++) {
+                                        if (tags[index] !== "java" && tags[index].length > 0)
+                                            update_voted_down(request, tags[index]);
+                                    }
+                                }
                             });
                     }
                 })
@@ -617,14 +796,18 @@ function retrieveContentBasedRecommendationPost(user_name) {
     UserProfileModel
         .find({"local.username": user_name})
         .exec(function (error, user_info) {
+                var tags = user_info[0].local.temporary_user_tags;
+                var regex = "";
+                for (var index = 0; index < tags.length; index++) {
+                    regex = regex + tags[index].tags + "|";
+                }
                 SOPostModel
                     .find({
                         $and: [
                             {"type": "\"question"},
-                            {"tag": {$regex: user_info[0].local.temporary_user_tags.toString().replace(/[,]/g, "|")}},
+                            {"tag": {$regex: regex}},
                         ]
                     })
-                    .sort({"vote": "desc"})
                     .limit(10)
                     .exec(function (error, content_based_stack_overflow_posts) {
                         if (error)

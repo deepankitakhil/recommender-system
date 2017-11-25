@@ -19,8 +19,10 @@ var userProfileSchema = mongoose_lib.Schema({
         bio: String,
         user_tags: [String],
         favorites: [String],
-        voted: [String],
-        temporary_user_tags: [String]
+        search: [{tags: String, count: Number}],
+        up_voted: [{tags: String, count: Number}],
+        down_voted: [{tags: String, count: Number}],
+        temporary_user_tags: [{tags: String, count: Number}]
     }
 
 });
