@@ -255,7 +255,9 @@ module.exports = function (application_root, passport_auth) {
                         user_up_voted: user_info[0].local.up_voted,
                         user_down_voted: user_info[0].local.down_voted,
                         user_user_tags: user_info[0].local.user_tags,
-                        osum_data: osum_data
+                        users_temporary_user_tags: osum_data.users_temporary_user_tags,
+                        users_up_voted: osum_data.users_up_voted,
+                        users_down_voted: osum_data.users_down_voted
                     })
                 }
             })
