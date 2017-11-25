@@ -243,15 +243,18 @@ module.exports = function (application_root, passport_auth) {
                     response.render('error.ejs', {
                         posts: [],
                     });
-                response.render('dashboard.ejs', {
-                    user_bio: user_info[0].bio,
-                    user_temporary_user_tags: user_info[0].temporary_user_tags,
-                    user_search: user_info[0].search,
-                    user_favorites: user_info[0].favorites,
-                    user_up_voted: user_info[0].up_voted,
-                    user_down_voted: user_info[0].down_voted,
-                    user_user_tags: user_info[0].user_tags
-                })
+                else {
+                    buildOSUM(request.user.local.username);
+                    response.render('dashboard.ejs', {
+                        user_bio: user_info[0].local.bio,
+                        user_temporary_user_tags: user_info[0].local.temporary_user_tags,
+                        user_search: user_info[0].local.search,
+                        user_favorites: user_info[0].local.favorites,
+                        user_up_voted: user_info[0].local.up_voted,
+                        user_down_voted: user_info[0].local.down_voted,
+                        user_user_tags: user_info[0].local.user_tags
+                    })
+                }
             })
     });
 
@@ -849,4 +852,25 @@ function buildCollaborationBasedRecommendationPost(users) {
                 throw error;
             collaborative_based_recommendation_posts = collaboration_based_post;
         })
+}
+
+
+function buildOSUM(user_name) {
+    UserProfileModel.find({'local.username': {$nin: [user_name]}}, function (error, all_users) {
+        if (error)
+            console.log(error);
+        else {
+            buildDataNeededForOSUM(all_users);
+        }
+    }).select('-_id');
+}
+
+function buildDataNeededForOSUM(all_users) {
+
+    for (var index = 0; index < all_users.length; index++) {
+
+
+
+    }
+
 }
