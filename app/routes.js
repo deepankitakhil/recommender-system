@@ -247,6 +247,7 @@ module.exports = function (application_root, passport_auth) {
                 else {
                     buildOSUM(request.user.local.username);
                     response.render('dashboard.ejs', {
+                        name: request.user.local.username,
                         user_bio: user_info[0].local.bio,
                         user_temporary_user_tags: user_info[0].local.temporary_user_tags,
                         user_search: user_info[0].local.search,
