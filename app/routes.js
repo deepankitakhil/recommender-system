@@ -21,6 +21,7 @@ var tagsInJSONFormat = [];
 var searchResults = [];
 var content_based_recommendation_posts = [];
 var collaborative_based_recommendation_posts = [];
+var osum_data = {};
 
 function update_temporary_user_tags(request, searched_keyword) {
     UserProfileModel
@@ -243,16 +244,20 @@ module.exports = function (application_root, passport_auth) {
                     response.render('error.ejs', {
                         posts: [],
                     });
-                response.render('dashboard.ejs', {
-                    name: request.user.local.username,
-                    user_bio: user_info[0].local.bio,
-                    user_temporary_user_tags: user_info[0].local.temporary_user_tags,
-                    user_search: user_info[0].local.search,
-                    user_favorites: user_info[0].local.favorites,
-                    user_up_voted: user_info[0].local.up_voted,
-                    user_down_voted: user_info[0].local.down_voted,
-                    user_user_tags: user_info[0].local.user_tags
-                })
+                else {
+                    buildOSUM(request.user.local.username);
+                    response.render('dashboard.ejs', {
+                        name: request.user.local.username,
+                        user_bio: user_info[0].local.bio,
+                        user_temporary_user_tags: user_info[0].local.temporary_user_tags,
+                        user_search: user_info[0].local.search,
+                        user_favorites: user_info[0].local.favorites,
+                        user_up_voted: user_info[0].local.up_voted,
+                        user_down_voted: user_info[0].local.down_voted,
+                        user_user_tags: user_info[0].local.user_tags,
+                        osum_data: osum_data
+                    })
+                }
             })
     });
 
@@ -728,6 +733,7 @@ module.exports = function (application_root, passport_auth) {
         searchResults = [];
         content_based_recommendation_posts = [];
         collaborative_based_recommendation_posts = [];
+        osum_data = {};
         request.logout();
         response.redirect('/');
     });
@@ -850,4 +856,58 @@ function buildCollaborationBasedRecommendationPost(users) {
                 throw error;
             collaborative_based_recommendation_posts = collaboration_based_post;
         })
+}
+
+
+function buildOSUM(user_name) {
+    UserProfileModel.find({'local.username': {$nin: [user_name]}}, function (error, all_users) {
+        if (error)
+            console.log(error);
+        else {
+            osum_data = buildDataNeededForOSUM(all_users);
+            console.log(osum_data);
+        }
+    }).select('-_id');
+}
+
+function buildDataNeededForOSUM(user_info) {
+    var data = {
+        users_temporary_user_tags: [],
+        users_search: [],
+        users_up_voted: [],
+        users_down_voted: [],
+        users_favorites: [],
+        users_user_tags: []
+    };
+
+    for (var index = 0; index < user_info.length; index++) {
+        appendUserData(data, 'users_temporary_user_tags', user_info[index].local.temporary_user_tags, true);
+        appendUserData(data, 'users_search', user_info[index].local.search, true);
+        appendUserData(data, 'users_up_voted', user_info[index].local.up_voted, true);
+        appendUserData(data, 'users_down_voted', user_info[index].local.down_voted, true);
+        appendUserData(data, 'users_favorites', user_info[index].local.user_tags, false);
+        appendUserData(data, 'users_user_tags', user_info[index].local.favorites, false);
+    }
+
+    return data;
+}
+
+function appendUserData(data, type, entry, is_tags_present) {
+    for (var index = 0; index < entry.length; index++) {
+        var found = false;
+        if (is_tags_present) {
+            for (var j = 0; j < data[type].length; j++) {
+                if (data[type][j].tags === entry[index].tags) {
+                    data[type][j].count += entry[index].count;
+                    found = true;
+                }
+            }
+            if (!found)
+                data[type].push({tags: entry[index].tags, count: entry[index].count})
+
+        } else {
+            data[type].push(entry[index]);
+        }
+    }
+
 }
