@@ -246,7 +246,6 @@ module.exports = function (application_root, passport_auth) {
                         posts: [],
                     });
                 else {
-                    buildOSUM(request.user.local.username);
                     response.render('dashboard.ejs', {
                         name: request.user.local.username,
                         user_bio: user_info[0].local.bio,
@@ -729,6 +728,7 @@ module.exports = function (application_root, passport_auth) {
     application_root.get('/profile', isUserLoggedIn, function (request, response) {
         retrieveContentBasedRecommendationPost(request.user.local.username);
         retrieveCollaborationBasedRecommendationPost(request.user.local.username);
+        buildOSUM(request.user.local.username);
         response.render('profile.ejs', {
             user: request.user,
         });
