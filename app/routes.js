@@ -15,10 +15,9 @@ https://evdokimovm.github.io/javascript/nodejs/mongodb/pagination/expressjs/ejs/
 var SOPostModel = require('../app/models/post');
 var UserProfileModel = require('../app/models/user_profile');
 var nodeSuggestiveSearch = nss = require('../search/search.js').init(undefined);
-const fs = require('fs');
-var searchElements = [];
+var searchElements = require('../search/post_title.json');
+var tagsInJSONFormat = require('../search/tag_search/tags.json');
 var tags = [];
-var tagsInJSONFormat = [];
 var searchResults = [];
 var content_based_recommendation_posts = [];
 var collaborative_based_recommendation_posts = [];
@@ -224,9 +223,6 @@ function update_voted_down(request, searched_keyword) {
 module.exports = function (application_root, passport_auth) {
 
     application_root.get('/', function (request, response) {
-
-        var rawdata = fs.readFileSync('../Recommender-System/search/post_title.json');
-        searchElements = JSON.parse(rawdata);
         response.redirect('/post/1');
     });
 
@@ -272,7 +268,7 @@ module.exports = function (application_root, passport_auth) {
         if (request.isAuthenticated())
             response.redirect('/personalized_search/' + keyword);
 
-        nodeSuggestiveSearch.loadJson('../Recommender-System/search/post_title.json')
+        nodeSuggestiveSearch.loadJsonString(JSON.stringify(searchElements))
             .then(() => {
                 nodeSuggestiveSearch.query(keyword).then((data) => {
                         var items = data.itemsId;
@@ -375,7 +371,7 @@ module.exports = function (application_root, passport_auth) {
         if (searched_keyword !== undefined && searched_keyword.length > 0)
             update_search_tags(request, searched_keyword);
 
-        nodeSuggestiveSearch.loadJson('../Recommender-System/search/post_title.json')
+        nodeSuggestiveSearch.loadJsonString(JSON.stringify(searchElements))
             .then(() => {
                 nodeSuggestiveSearch.query(keyword).then((data) => {
                         var items = data.itemsId;
@@ -708,8 +704,6 @@ module.exports = function (application_root, passport_auth) {
 
     application_root.get('/sign-up', function (request, response) {
         if (tags === undefined || tags.length === 0) {
-            var rawData = fs.readFileSync('../Recommender-System/search/tag_search/tags.json');
-            tagsInJSONFormat = JSON.parse(rawData);
             for (var index = 0; index < tagsInJSONFormat.length; index++) {
                 tags.push(tagsInJSONFormat[index].tag);
             }
