@@ -10,6 +10,7 @@
  https://github.com/ivanvaladares/Node-Suggestive-Search
  https://stackoverflow.com/questions/42258116/dividing-a-page-into-two-vertical-and-indetical-sections-with-border
  http://bl.ocks.org/NPashaP/96447623ef4d342ee09b
+ https://www.w3schools.com/howto/howto_js_dropdown.asp
 https://evdokimovm.github.io/javascript/nodejs/mongodb/pagination/expressjs/ejs/bootstrap/2017/08/20/create-pagination-with-nodejs-mongodb-express-and-ejs-step-by-step-from-scratch.html
  */
 var SOPostModel = require('../app/models/post');
