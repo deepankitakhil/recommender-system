@@ -15,13 +15,56 @@
 
 </head>
 <style>
+
+    .dropbtn {
+        background-color: steelblue;
+        color: white;
+        padding: 5px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        width: 100px;
+        margin-left: 120px;
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .dropdown-content a:hover {background-color: #f1f1f1}
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .dropdown:hover .dropbtn {
+        background-color: #3e8e41;
+    }
+
     body{
         width:1160px;
         margin:50px auto;
     }
     path {  stroke: #fff; }
     path:hover {  opacity:0.9; }
-    rect:hover {  fill:blue; }
+
     .axis {  font: 10px sans-serif; }
     .legend tr{    border-bottom:1px solid grey; }
     .legend tr:first-child{    border-top:1px solid grey; }
@@ -72,6 +115,12 @@
                 function goToLogOut() {
                     location.href = "/logout";
                 }
+                function postByTags() {
+
+                    var fired_button = $(this).text();
+                    location.href = "/personalized_tag_search/" + fired_button;
+                }
+
             </script>
         </div>
     </section>
@@ -80,7 +129,21 @@
             <div class="thumbnail" style="background-color: wheat">
                 <div class="caption">
                     <h3 style="text-align: center">Profile Tags</h3>
-                    <h3 style="text-align: center;color: #953b39"><%= user_user_tags.length %></h3>
+                    <br>
+                    <div class="dropdown">
+                        <button class="dropbtn" style="color: white;font-size: 16pt"><b><%= user_user_tags.length %></b></button>
+                        <div class="dropdown-content">
+                            <%function beautifyOutput(input) {
+                                var stringInput = input.replace("\"", "").replace("\\", "")
+                                stringInput = stringInput.substr(0, stringInput.length - 1)
+                                return stringInput;
+                            }
+
+                            for (var i=0;i<user_user_tags.length;i++){%>
+                            <a value='<%= beautifyOutput(JSON.stringify(user_user_tags[i])) %>'onclick="postByTags.call(this)"><%= beautifyOutput(JSON.stringify(user_user_tags[i]))%></a>
+                            <% }%>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -89,8 +152,20 @@
             <div class="thumbnail" style="background-color: wheat">
                 <div class="caption">
                     <h3 style="text-align: center">New tags</h3>
-                    <h3 style="text-align: center;color: #953b39"><%= user_temporary_user_tags.length %></h3>
-
+                    <br>
+                    <div class="dropdown">
+                        <button class="dropbtn" style="color: white;font-size: 16pt"><b><%= user_temporary_user_tags.length %></b></button>
+                    <div class="dropdown-content">
+                        <%function beautifyOutput(input) {
+                            var stringInput = input.replace("\"", "").replace("\\", "")
+                            stringInput = stringInput.substr(0, stringInput.length - 1)
+                            return stringInput;
+                        }
+                        for (var i=0;i<user_temporary_user_tags.length;i++){%>
+                            <a value='<%= beautifyOutput(JSON.stringify(user_temporary_user_tags[i])) %>'onclick="postByTags.call(this)"><%= beautifyOutput(JSON.stringify(user_temporary_user_tags[i].tags))%></a>
+                       <% }%>
+                    </div>
+                    </div>
                 </div>
             </div>
             <div style="padding-left: 150px;padding-top: 50px">
@@ -102,8 +177,20 @@
             <div class="thumbnail" style="background-color: wheat">
                 <div class="caption">
                     <h3 style="text-align: center">Favorite Questions</h3>
-                    <h3 style="text-align: center;color: #953b39"><%= user_favorites.length %></h3>
-
+                    <br>
+                    <div class="dropdown">
+                        <button class="dropbtn" style="color: white;font-size: 16pt"><b><%= user_favorites.length %></b></button>
+                        <div class="dropdown-content">
+                            <%function beautifyOutput(input) {
+                                var stringInput = input.replace("\"", "").replace("\\", "")
+                                stringInput = stringInput.substr(0, stringInput.length - 1)
+                                return stringInput;
+                            }
+                            for (var i=0;i<user_favorites.length;i++){%>
+                            <a href="#"><%= beautifyOutput(JSON.stringify(user_favorites[i]))%></a>
+                            <% }%>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -115,7 +202,7 @@
 
 
     </div>
-    <div id='dashboard1' style="margin-top: 50px;margin-left: 180px">
+    <div id='dashboard1' style="margin-top: 50px;margin-left: 300px">
     </div>
     <script>
         function dashboard(id, fData){
@@ -164,6 +251,7 @@
 
                 //create the rectangles.
                 bars.append("rect")
+                    .style("hover",'blue')
                     .attr("x", function(d) { return x(d[0]); })
                     .attr("y", function(d) { return y(d[1]); })
                     .attr("width", x.rangeBand())
@@ -838,10 +926,11 @@
 
         $("#osum_button").change(function(){
             if($(this).prop("checked") == true){
-                d3.select("#dashboard1").remove();
+                $("#dashboard1 div").html('')
                 dashboard('#dashboard',myData);
             }else{
                 d3.selectAll("svg").remove();
+                d3.selectAll("g").remove();
                 d3.select("table").remove();
                 word_cloud('dashboard1', Highcharts, othersData, "", "");
 
